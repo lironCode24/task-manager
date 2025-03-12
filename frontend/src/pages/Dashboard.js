@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaUserAlt } from "react-icons/fa"; // Using FontAwesome React icons for profile
 
 function Dashboard() {
   const [userData, setUserData] = useState(null);
+  const [tasks, setTasks] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -14,6 +16,7 @@ function Dashboard() {
       return;
     }
 
+    // Fetch user data
     const fetchUserData = async () => {
       try {
         const response = await fetch("http://localhost:5000/api/user/data", {
@@ -29,7 +32,23 @@ function Dashboard() {
       }
     };
 
+    // Fetch user tasks
+    const fetchUserTasks = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/user/tasks", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+        setTasks(data);
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      }
+    };
+
     fetchUserData();
+    fetchUserTasks();
   }, [navigate]);
 
   // Logout function
@@ -41,15 +60,44 @@ function Dashboard() {
   };
 
   return (
-    <div>
+    <div style={{ textAlign: "center", padding: "20px" }}>
       <h2>Dashboard</h2>
+
+      {/* User Info Icon */}
+      <div style={{ position: "absolute", top: "20px", right: "20px" }}>
+        <FaUserAlt
+          style={{
+            fontSize: "30px",
+            cursor: "pointer",
+            color: "#007bff",
+          }}
+          onClick={() => navigate("/user-info")} // Navigate to user info page
+        />
+      </div>
+
       {!userData ? (
         <p>Loading...</p>
       ) : (
         <div>
-          <h3>Welcome, {userData.username}!</h3>
+          <h3>Hi, {userData.username}!</h3>
           <p>Email: {userData.email}</p>
-          {/* You can display more user data here */}
+
+          {/* Tasks Section */}
+          <h3>Your Tasks:</h3>
+          <ul style={{ listStyleType: "none", padding: "0" }}>
+            {tasks.length === 0 ? (
+              <p>No tasks available.</p>
+            ) : (
+              tasks.map((task, index) => (
+                <li key={index} style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>
+                  <h4>{task.title}</h4>
+                  <p>{task.description}</p>
+                  {/* You can add more task info here */}
+                </li>
+              ))
+            )}
+          </ul>
+
           <button onClick={handleLogout}>Logout</button>
         </div>
       )}

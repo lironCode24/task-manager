@@ -14,7 +14,7 @@ function Login() {
     const token = localStorage.getItem("token");
     if (token) {
       // If a token is found, redirect the user to the dashboard or another page
-      navigate("/dashboard");
+      navigate("/Dashboard");
     }
   }, [navigate]);
 
@@ -33,7 +33,7 @@ function Login() {
       localStorage.setItem("token", response.data.token);
 
       // Redirect to the dashboard or another page after successful login
-      navigate("/dashboard"); // Replace '/dashboard' with the path you want to navigate to
+      navigate("/Dashboard"); 
     } catch (error) {
       console.error("Login Failed:", error.response?.data || error.message);
       // Set the error message to be shown on the page

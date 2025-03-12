@@ -35,3 +35,19 @@ body {
     height: auto;
   }
   
+  
+
+/* Heading styles */
+h2 {
+  color: #333;
+  font-size: 28px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+h3 {
+  color: #555;
+  font-size: 22px;
+  margin-bottom: 10px;
+  text-align: center;
+}
