@@ -1,36 +1,29 @@
-const express = require("express");
-const Task = require("../Task");
+const express = require('express');
 const router = express.Router();
+const Task = require('../models/Task');
+const authenticate = require('../middleware/authenticate');  
 
-// Get all tasks
-router.get("/", async (req, res) => {
-  const tasks = await Task.find();
-  res.json(tasks);
-});
+// Route to handle task creation
+router.post('/tasks', authenticate, async (req, res) => {
+  const { title, description, dueDate, priority, status } = req.body;
+  const userId = req.user.id;  // Extracted from the token
 
-// Create new task
-router.post("/", async (req, res) => {
-  const { title, description } = req.body;
-  const task = new Task({ title, description });
-  await task.save();
-  res.json(task);
-});
+  try {
+    const newTask = new Task({
+      title,
+      description,
+      dueDate,
+      priority,
+      status,
+      userId,  // Store the userId from the token
+    });
 
-// Update task
-router.put("/:id", async (req, res) => {
-  const { title, description, completed } = req.body;
-  const task = await Task.findByIdAndUpdate(
-    req.params.id,
-    { title, description, completed },
-    { new: true }
-  );
-  res.json(task);
-});
-
-// Delete task
-router.delete("/:id", async (req, res) => {
-  await Task.findByIdAndDelete(req.params.id);
-  res.json({ message: "Task deleted" });
+    await newTask.save();  // Save the new task to the database
+    res.status(201).json({ message: "Task added successfully", task: newTask });
+  } catch (error) {
+    console.error("Error adding task:", error);
+    res.status(500).json({ message: "Error adding task" });
+  }
 });
 
 module.exports = router;

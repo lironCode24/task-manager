@@ -80,7 +80,6 @@ function Dashboard() {
       ) : (
         <div>
           <h3>Hi, {userData.username}!</h3>
-          <p>Email: {userData.email}</p>
 
           {/* Tasks Section */}
           <h3>Your Tasks:</h3>

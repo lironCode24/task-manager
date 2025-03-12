@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function Dashboard() {
+function UserInfo() {
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
 
@@ -40,6 +40,11 @@ function Dashboard() {
     navigate("/login");
   };
 
+  // Handle "Back to Dashboard"
+  const handleBackToDashboard = () => {
+    navigate("/dashboard");
+  };
+
   return (
     <div style={{ textAlign: "center", padding: "20px" }}>
       <h2>Info</h2>
@@ -51,10 +56,13 @@ function Dashboard() {
           <p>Email: {userData.email}</p>
           {/* You can display more user data here */}
           <button onClick={handleLogout}>Logout</button>
+          <button onClick={handleBackToDashboard} style={{ marginLeft: "10px" }}>
+            Back to Dashboard
+          </button>
         </div>
       )}
     </div>
   );
 }
 
-export default Dashboard;
+export default UserInfo;

@@ -34,7 +34,6 @@ mongoose
 const taskRoutes = require("./routes/taskRoutes");
 app.use("/api/tasks", taskRoutes);
 
-
 const authRoutes = require("./routes/authRoutes");
 app.use("/api/auth", authRoutes);
 
