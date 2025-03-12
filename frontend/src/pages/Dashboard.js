@@ -35,7 +35,7 @@ function Dashboard() {
     // Fetch user tasks
     const fetchUserTasks = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/user/tasks", {
+        const response = await fetch("http://localhost:5000/api/tasks/getTasks", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -90,13 +90,31 @@ function Dashboard() {
               tasks.map((task, index) => (
                 <li key={index} style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>
                   <h4>{task.title}</h4>
-                  <p>{task.description}</p>
-                  {/* You can add more task info here */}
+                  <p><strong>Description:</strong> {task.description}</p>
+                  <p><strong>Due Date:</strong> {new Date(task.dueDate).toLocaleDateString()}</p>
+                  <p><strong>Priority:</strong> {task.priority}</p>
+                  <p><strong>Status:</strong> {task.status}</p>
                 </li>
               ))
             )}
           </ul>
 
+
+          {/* Add Task Button */}
+          <button
+            onClick={() => navigate("/add-task")}
+            style={{
+              margin: "10px",
+              padding: "10px 20px",
+              backgroundColor: "#28a745",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+            }}
+          >
+            Add Task
+          </button>
           <button onClick={handleLogout}>Logout</button>
         </div>
       )}

@@ -26,4 +26,19 @@ router.post('/tasks', authenticate, async (req, res) => {
   }
 });
 
+// Get all tasks for the authenticated user
+router.get('/getTasks', authenticate, async (req, res) => {
+  try {
+    const userId = req.user.id;  // Extract user ID from token
+    console.log("Fetching tasks for user:", userId); // Debugging
+
+    const tasks = await Task.find({ userId }); // Query tasks linked to user
+    res.status(200).json(tasks);
+  } catch (error) {
+    console.error("Error fetching tasks:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 module.exports = router;
