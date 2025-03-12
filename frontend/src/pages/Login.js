@@ -42,7 +42,7 @@ function Login() {
   };
 
   return (
-    <div>
+    <div className="container">
       <h2>Login</h2>
       <form onSubmit={handleLogin}>
         <label>Username:</label>
@@ -65,6 +65,14 @@ function Login() {
 
       {/* Error message */}
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+
+      {/* Back to Home Page Button */}
+      <button 
+        onClick={() => navigate("/")} 
+        style={{ marginTop: "15px", padding: "10px", backgroundColor: "#6c757d", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" }}
+      >
+        Back to Home Page
+      </button>
     </div>
   );
 }

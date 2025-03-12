@@ -52,7 +52,7 @@ const Register = () => {
   };
 
   return (
-    <div>
+    <div className="container">
       <h1>Register Page</h1>
       <form onSubmit={handleRegister}>
         <label>Username:</label>
@@ -85,6 +85,14 @@ const Register = () => {
       {/* Display success or error message */}
       {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+
+      {/* Back to Login Button */}
+      <button 
+        onClick={() => navigate("/login")} 
+        style={{ marginTop: "15px", padding: "10px", backgroundColor: "#6c757d", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" }}
+      >
+        Back to Login
+      </button>
     </div>
   );
 };
