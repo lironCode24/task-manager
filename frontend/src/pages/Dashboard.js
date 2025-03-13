@@ -89,8 +89,8 @@ function Dashboard() {
                     taskList.map((task) => (
                       <div key={task._id} className="task-card">
                         <h4>{task.title}</h4>
-                        <h4>{task._id}</h4>
-                        <p><strong>Due:</strong> {new Date(task.dueDate).toLocaleDateString()}</p>
+                        {/* <p>{task.description}</p> */}
+                        <p><strong>Due:</strong> {new Date(task.dueDate).toLocaleDateString('en-GB')}</p>
                         <p><strong>Priority:</strong> {task.priority}</p>
                         <button 
                           className="edit-button" 

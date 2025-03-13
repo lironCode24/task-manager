@@ -143,6 +143,7 @@ const AddTask = () => {
             padding: "10px 20px",
             fontSize: "16px",
             cursor: "pointer",
+            backgroundColor: "red",
           }}
         >
           Back to dashboard

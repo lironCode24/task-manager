@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import "../styles/AddTask.css"; 
 
 function EditTask() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [task, setTask] = useState({ title: "", description: "", priority: "", status: "" });
+  const [task, setTask] = useState({ title: "", description: "", priority: "", status: "", dueDate: "" });
+  const [errorMessage, setErrorMessage] = useState(""); 
   const [successMessage, setSuccessMessage] = useState(""); 
 
   useEffect(() => {
     const token = localStorage.getItem("token");
 
     const fetchTask = async () => {
-      console.log(`http://localhost:5000/api/tasks/getTaskById?id=${id}`)
       try {
         const response = await fetch(`http://localhost:5000/api/tasks/getTaskById?id=${id}`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -35,7 +36,12 @@ function EditTask() {
     e.preventDefault();
     const token = localStorage.getItem("token");
 
-    
+    // Simple validation checks
+    if (!task.title || !task.description || !task.dueDate) {
+      setErrorMessage("Please fill in all the required fields.");
+      return;
+    }
+
     try {
       const response = await fetch(`http://localhost:5000/api/tasks/${id}`, {
         method: "PUT",
@@ -47,60 +53,116 @@ function EditTask() {
       });
 
       if (response.ok) {
-        setSuccessMessage("Task updated successfully! ✅"); //  Show success message
-
+        setSuccessMessage("Task updated successfully! ✅");
         setTimeout(() => {
           setSuccessMessage("");
           navigate("/dashboard"); 
         }, 2000); // 2 seconds delay
       } else {
-        console.error("Failed to update task.");
+        setErrorMessage("Failed to update task.");
       }
     } catch (error) {
-      console.error("Error updating task:", error);
+      setErrorMessage("Error updating task.");
     }
   };
 
   return (
-    <div className="edit-task-container">
+    <div className="task-form-container">
       <h2>Edit Task</h2>
       
-      {successMessage && <p className="success-message">{successMessage}</p>} {/* Display success message */}
+      {/* Display success message */}
+      {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
 
+      {/* Display error message */}
+      {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+      
       <form onSubmit={handleSubmit}>
-        <label>Title:</label>
-        <input type="text" name="title" value={task.title} onChange={handleChange} required />
+        {/* Title Field */}
+        <div>
+          <label htmlFor="title">Title *</label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            placeholder="Enter task title"
+            value={task.title}
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-        <label>Description:</label>
-        <textarea name="description" value={task.description} onChange={handleChange} required />
+        {/* Description Field */}
+        <div>
+          <label htmlFor="description">Description *</label>
+          <textarea
+            id="description"
+            name="description"
+            placeholder="Enter task description"
+            value={task.description}
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-        <label>Priority:</label>
-        <select name="priority" value={task.priority} onChange={handleChange}>
-          <option value="Low">Low</option>
-          <option value="Medium">Medium</option>
-          <option value="High">High</option>
-        </select>
+        {/* Due Date Field */}
+        <div>
+          <label htmlFor="dueDate">Due Date *</label>
+          <input
+            type="date"
+            id="dueDate"
+            name="dueDate"
+            value={task.dueDate ? task.dueDate.split("T")[0] : ""}
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-        <label>Status:</label>
-        <select name="status" value={task.status} onChange={handleChange}>
-          <option value="Not Started">Not Started</option>
-          <option value="In Progress">In Progress</option>
-          <option value="Completed">Completed</option>
-        </select>
+        {/* Priority Field */}
+        <div>
+          <label htmlFor="priority">Priority</label>
+          <select
+            id="priority"
+            name="priority"
+            value={task.priority}
+            onChange={handleChange}
+          >
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+          </select>
+        </div>
 
+        {/* Status Field */}
+        <div>
+          <label htmlFor="status">Status</label>
+          <select
+            id="status"
+            name="status"
+            value={task.status}
+            onChange={handleChange}
+          >
+            <option value="Not Started">Not Started</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+          </select>
+        </div>
+
+        {/* Submit Button */}
         <button type="submit">Save Changes</button>
-        
-      <button
-          onClick={() => navigate("/dashboard")}
-          style={{
-            padding: "10px 20px",
-            fontSize: "16px",
-            cursor: "pointer",
-          }}
-        >
-          Back to dashboard
-        </button>
       </form>
+      
+      {/* Back to dashboard Button */}
+      <button
+        onClick={() => navigate("/dashboard")}
+        style={{
+          padding: "10px 20px",
+          fontSize: "16px",
+          cursor: "pointer",
+          backgroundColor: "red",
+        }}
+      >
+        Back to dashboard
+      </button>
     </div>
   );
 }
