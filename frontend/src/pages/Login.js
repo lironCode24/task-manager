@@ -27,7 +27,7 @@ function Login() {
         username,
         password,
       });
-      console.log("Login Success:", response.data);
+      // console.log("Login Success:", response.data);
 
       // Store the token in local storage or state (optional)
       localStorage.setItem("token", response.data.token);

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "../styles/AddTask.css"; 
 
 const AddTask = () => {
   const [title, setTitle] = useState("");
@@ -9,6 +10,15 @@ const AddTask = () => {
   const [status, setStatus] = useState("Not Started");
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
+
+  
+  // Get today's date in YYYY-MM-DD format
+  const today = new Date().toISOString().split("T")[0];
+
+  // Get 5 years from today in YYYY-MM-DD format
+  const oneYearLater = new Date();
+  oneYearLater.setFullYear(oneYearLater.getFullYear() + 5);
+  const maxDate = oneYearLater.toISOString().split("T")[0];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -85,8 +95,10 @@ const AddTask = () => {
           <input
             type="date"
             id="dueDate"
-            value={dueDate}
+            value={dueDate}            
             onChange={(e) => setDueDate(e.target.value)}
+            min={today}   // Restrict past dates
+            max={maxDate} // Restrict future dates beyond one year
             required
           />
         </div>
@@ -125,6 +137,16 @@ const AddTask = () => {
         {/* Submit Button */}
         <button type="submit">Add Task</button>
       </form>
+      <button
+          onClick={() => navigate("/dashboard")}
+          style={{
+            padding: "10px 20px",
+            fontSize: "16px",
+            cursor: "pointer",
+          }}
+        >
+          Back to dashboard
+        </button>
     </div>
   );
 };

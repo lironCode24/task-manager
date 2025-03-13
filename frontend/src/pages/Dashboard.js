@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaUserAlt } from "react-icons/fa"; // Using FontAwesome React icons for profile
+import "../styles/Dashboard.css"; 
 
 function Dashboard() {
   const [userData, setUserData] = useState(null);
@@ -16,36 +17,33 @@ function Dashboard() {
       return;
     }
 
-    // Fetch user data
     const fetchUserData = async () => {
       try {
         const response = await fetch("http://localhost:5000/api/user/data", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
         const data = await response.json();
         setUserData(data);
       } catch (error) {
         console.error("Error fetching user data:", error);
-        navigate("/login"); // Redirect to login if there's an error
+        navigate("/login"); 
       }
     };
 
-    // Fetch user tasks
     const fetchUserTasks = async () => {
       try {
         const response = await fetch("http://localhost:5000/api/tasks/getTasks", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
         const data = await response.json();
-        setTasks(data);
+        // console.log("Tasks from API:", data); // Debugging
+        setTasks(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error("Error fetching tasks:", error);
+        setTasks([]);
       }
     };
+    
 
     fetchUserData();
     fetchUserTasks();
@@ -53,70 +51,71 @@ function Dashboard() {
 
   // Logout function
   const handleLogout = () => {
-    // Remove the token from localStorage
     localStorage.removeItem("token");
-    // Redirect the user to the login page
     navigate("/login");
   };
 
+  // Categorizing tasks by status
+  const categorizedTasks = {
+    "Not Started": tasks.filter((task) => task.status === "Not Started"),
+    "In Progress": tasks.filter((task) => task.status === "In Progress"),
+    "Completed": tasks.filter((task) => task.status === "Completed"),
+  };
+
   return (
-    <div style={{ textAlign: "center", padding: "20px" }}>
+    <div className="dashboard-container">
       <h2>Dashboard</h2>
 
       {/* User Info Icon */}
-      <div style={{ position: "absolute", top: "20px", right: "20px" }}>
-        <FaUserAlt
-          style={{
-            fontSize: "30px",
-            cursor: "pointer",
-            color: "#007bff",
-          }}
-          onClick={() => navigate("/user-info")} // Navigate to user info page
-        />
+      <div className="user-icon">
+        <FaUserAlt onClick={() => navigate("/user-info")} />
       </div>
 
       {!userData ? (
         <p>Loading...</p>
       ) : (
-        <div>
+        <>
           <h3>Hi, {userData.username}!</h3>
 
-          {/* Tasks Section */}
-          <h3>Your Tasks:</h3>
-          <ul style={{ listStyleType: "none", padding: "0" }}>
-            {tasks.length === 0 ? (
-              <p>No tasks available.</p>
-            ) : (
-              tasks.map((task, index) => (
-                <li key={index} style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>
-                  <h4>{task.title}</h4>
-                  <p><strong>Description:</strong> {task.description}</p>
-                  <p><strong>Due Date:</strong> {new Date(task.dueDate).toLocaleDateString()}</p>
-                  <p><strong>Priority:</strong> {task.priority}</p>
-                  <p><strong>Status:</strong> {task.status}</p>
-                </li>
-              ))
-            )}
-          </ul>
+          {/* Kanban Board Layout */}
+          <div className="kanban-board">
+            {Object.entries(categorizedTasks).map(([status, taskList]) => (
+              <div key={status} className="kanban-column">
+                <h3>{status}</h3>
+                <div className="task-list">
+                  {taskList.length === 0 ? (
+                    <p>No tasks</p>
+                  ) : (
+                    taskList.map((task) => (
+                      <div key={task._id} className="task-card">
+                        <h4>{task.title}</h4>
+                        <h4>{task._id}</h4>
+                        <p><strong>Due:</strong> {new Date(task.dueDate).toLocaleDateString()}</p>
+                        <p><strong>Priority:</strong> {task.priority}</p>
+                        <button 
+                          className="edit-button" 
+                          onClick={() => navigate(`/edit-task/${task._id}`)}
+                        >
+                          Edit
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
 
-
-          {/* Add Task Button */}
-          <button
-            onClick={() => navigate("/add-task")}
-            style={{
-              margin: "10px",
-              padding: "10px 20px",
-              backgroundColor: "#28a745",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
-            }}
-          >
-            Add Task
-          </button>
-          <button onClick={handleLogout}>Logout</button>
-        </div>
+          {/* Buttons */}
+          <div className="dashboard-buttons">
+            <button onClick={() => navigate("/add-task")} className="add-task-button">
+              Add Task
+            </button>
+            <button onClick={handleLogout} className="logout-button">
+              Logout
+            </button>
+          </div>
+        </>
       )}
     </div>
   );

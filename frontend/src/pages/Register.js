@@ -37,7 +37,7 @@ const Register = () => {
         password,
       });
 
-      console.log("Registration Success:", response.data);
+      // console.log("Registration Success:", response.data);
       setSuccessMessage("Registration successful! Redirecting to login page.");
 
       // Wait for 4 seconds before redirecting to login page

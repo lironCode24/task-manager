@@ -40,5 +40,48 @@ router.get('/getTasks', authenticate, async (req, res) => {
   }
 });
 
+// Route to get task by id
+router.get('/getTaskById', authenticate, async (req, res) => {
+  const taskId = req.query.id; // Get id from query params
+
+  if (!taskId) {
+    return res.status(400).json({ message: "Task ID is required" });
+  }
+
+  try {
+    const task = await Task.findById(taskId);
+
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    res.status(200).json(task);
+  } catch (error) {
+    console.error("Error fetching task:", error);
+    res.status(500).json({ message: "Error fetching task" });
+  }
+});
+
+
+// Update Task by ID
+router.put("/:id", authenticate, async (req, res) => {
+  const taskId = req.params.id;
+  const updatedTask = req.body;
+
+  try {
+    const task = await Task.findByIdAndUpdate(taskId, updatedTask, {
+      new: true, // Return the updated task
+      runValidators: true, // Ensure new data is validated
+    });
+
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    res.status(200).json(task);
+  } catch (error) {
+    res.status(500).json({ message: "Error updating task" });
+  }
+});
 
 module.exports = router;
