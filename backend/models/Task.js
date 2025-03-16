@@ -29,6 +29,9 @@ const taskSchema = new mongoose.Schema({
     required: true, // Reference to the User model
   },
   completionDate: { type: Date }, // New field for completion date
+  notes: {
+    type: String, // Free text notes field for extra information
+  },
 }, {
   timestamps: true, // Automatically adds createdAt and updatedAt fields
 });

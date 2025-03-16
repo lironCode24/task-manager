@@ -12,6 +12,7 @@ function TaskInfo() {
     status: "Not Started",
     dueDate: "",
     completionDate: "",
+    notes: "",  // Added the 'notes' field to the state
   });
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -103,6 +104,17 @@ function TaskInfo() {
             id="status"
             name="status"
             value={task.status}
+            readOnly
+          />
+        </div>
+
+        {/* Notes Field */}
+        <div>
+          <label htmlFor="notes">Notes</label>
+          <textarea
+            id="notes"
+            name="notes"
+            value={task.notes}
             readOnly
           />
         </div>

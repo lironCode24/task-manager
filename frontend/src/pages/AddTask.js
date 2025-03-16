@@ -8,6 +8,7 @@ const AddTask = () => {
   const [dueDate, setDueDate] = useState("");
   const [priority, setPriority] = useState("Medium");
   const [status, setStatus] = useState("Not Started");
+  const [notes, setNotes] = useState(""); // New state for notes
   const [errorMessage, setErrorMessage] = useState("");
   const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
   const [completionDate, setCompletionDate] = useState(today);
@@ -17,7 +18,6 @@ const AddTask = () => {
   const oneYearLater = new Date();
   oneYearLater.setFullYear(oneYearLater.getFullYear() + 5);
   const maxDate = oneYearLater.toISOString().split("T")[0];
-  
   
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,8 +34,8 @@ const AddTask = () => {
       dueDate,
       priority,
       status,    
+      notes, // Add notes to task data
       ...(status === "Completed" && { completionDate }) // Only include if completed
-
     };
     
     const token = localStorage.getItem("token");
@@ -128,13 +128,13 @@ const AddTask = () => {
             onChange={(e) => {
               setStatus(e.target.value);
               setCompletionDate(e.target.value === "Completed" ? today : ""); // Auto-set or clear
-            }}          >
+            }}          
+          >
             <option value="Not Started">Not Started</option>
             <option value="In Progress">In Progress</option>
             <option value="Completed">Completed</option>
           </select>
 
-          
           {status === "Completed" && (
             <div>
               <label htmlFor="completionDate">Completion Date</label>
@@ -149,7 +149,17 @@ const AddTask = () => {
               />
             </div>
           )}
+        </div>
 
+        {/* Notes Field */}
+        <div>
+          <label htmlFor="notes">Notes</label>
+          <textarea
+            id="notes"
+            placeholder="Optional task notes"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+          />
         </div>
 
         {/* Error Message */}
@@ -159,16 +169,16 @@ const AddTask = () => {
         <button type="submit">Add Task</button>
       </form>
       <button
-          onClick={() => navigate("/dashboard")}
-          style={{
-            padding: "10px 20px",
-            fontSize: "16px",
-            cursor: "pointer",
-            backgroundColor: "blue",
-          }}
-        >
-          Back to dashboard
-        </button>
+        onClick={() => navigate("/dashboard")}
+        style={{
+          padding: "10px 20px",
+          fontSize: "16px",
+          cursor: "pointer",
+          backgroundColor: "blue",
+        }}
+      >
+        Back to dashboard
+      </button>
     </div>
   );
 };
