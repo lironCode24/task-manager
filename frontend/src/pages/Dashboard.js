@@ -6,6 +6,8 @@ import "../styles/Dashboard.css";
 function Dashboard() {
   const [userData, setUserData] = useState(null);
   const [tasks, setTasks] = useState([]);
+  const [searchQuery, setSearchQuery] = useState(""); // State for search query
+  const [priorityFilter, setPriorityFilter] = useState(""); // State for priority filter
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,9 +25,8 @@ function Dashboard() {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await response.json();
-        if(data.username.length<2){
-          
-        navigate("/login"); 
+        if (data.username.length < 2) {
+          navigate("/login"); 
         }
         setUserData(data);
       } catch (error) {
@@ -40,14 +41,12 @@ function Dashboard() {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await response.json();
-        // console.log("Tasks from API:", data); // Debugging
         setTasks(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error("Error fetching tasks:", error);
         setTasks([]);
       }
     };
-    
 
     fetchUserData();
     fetchUserTasks();
@@ -66,6 +65,19 @@ function Dashboard() {
     "Completed": tasks.filter((task) => task.status === "Completed"),
   };
 
+  // Filtering tasks based on title, priority, or due date
+  const filteredTasks = Object.fromEntries(
+    Object.entries(categorizedTasks).map(([status, taskList]) => [
+      status,
+      taskList.filter(
+        (task) =>
+          (task.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+            task.description.toLowerCase().includes(searchQuery.toLowerCase())) &&
+          (priorityFilter ? task.priority === priorityFilter : true) // Filter by priority
+      ),
+    ])
+  );
+
   return (
     <div className="dashboard-container">
       <h2>Dashboard</h2>
@@ -81,9 +93,34 @@ function Dashboard() {
         <>
           <h3>Hi, {userData.username}!</h3>
 
+          {/* Search Bar */}
+          <div className="search-container">
+            <input
+              type="text"
+              placeholder="Search tasks by title or description..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)} // Update search query on input change
+            />
+          </div>
+
+          {/* Priority Filter */}
+          <div className="filter-container">
+            <label htmlFor="priorityFilter">Filter by Priority: </label>
+            <select
+              id="priorityFilter"
+              value={priorityFilter}
+              onChange={(e) => setPriorityFilter(e.target.value)}
+            >
+              <option value="">All Priorities</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+
           {/* Kanban Board Layout */}
           <div className="kanban-board">
-            {Object.entries(categorizedTasks).map(([status, taskList]) => (
+            {Object.entries(filteredTasks).map(([status, taskList]) => (
               <div key={status} className="kanban-column">
                 <h3>{status}</h3>
                 <div className="task-list">
@@ -101,19 +138,19 @@ function Dashboard() {
                         <p><strong>Priority:</strong> {task.priority}</p>
                         
                         <div className="dashboard-buttons">
-                        <button 
-                          className="edit-button" 
-                          onClick={() => navigate(`/edit-task/${task._id}`)}
-                        >
-                          Edit
-                        </button>
+                          <button 
+                            className="edit-button" 
+                            onClick={() => navigate(`/edit-task/${task._id}`)}
+                          >
+                            Edit
+                          </button>
 
-                        <button 
-                          className="info-button" 
-                          onClick={() => navigate(`/task-info/${task._id}`)}
-                        >
-                          More details
-                        </button>
+                          <button 
+                            className="info-button" 
+                            onClick={() => navigate(`/task-info/${task._id}`)}
+                          >
+                            More details
+                          </button>
                         </div>
                       </div>
                     ))

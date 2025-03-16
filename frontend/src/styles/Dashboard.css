@@ -1,89 +1,132 @@
 .dashboard-container {
-    text-align: center;
-    padding: 20px;
-    background-color: #f4f5f7;
-  }
-  
-  .user-icon {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    font-size: 30px;
-    cursor: pointer;
-    color: #007bff;
-  }
-  
-  .kanban-board {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 20px;
-    gap: 20px;
-  }
-  
-  .kanban-column {
-    flex: 1;
-    min-width: 250px;
-    background: white;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .kanban-column h3 {
-    text-align: center;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #ddd;
-  }
-  
-  .task-list {
-    max-height: 400px;
-    overflow-y: auto;
-  }
-  
-  .task-card {
-    background: #fff;
-    margin: 10px 0;
-    padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .task-card h4 {
-    margin: 0 0 5px 0;
-    font-size: 16px;
-    color: #333;
-  }
-  
-  .task-card p {
-    margin: 5px 0;
-    font-size: 14px;
-    color: #666;
-  }
-  
-  .dashboard-buttons {
-    margin-top: 20px;
-  }
-  
-  .add-task-button {
-    background-color: #28a745;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-right: 10px;
-  }
-  
-  .logout-button {
-    background-color: #dc3545;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  
+  text-align: center;
+  padding: 20px;
+  background-color: #f4f5f7;
+}
+
+.user-icon {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 30px;
+  cursor: pointer;
+  color: #007bff;
+}
+
+/* Search and Filter Section */
+.search-container,
+.filter-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin: 20px 0;
+  align-items: center;
+}
+
+.search-container input,
+.filter-container select {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  width: 250px;
+  transition: all 0.3s ease;
+}
+
+.search-container input:focus,
+.filter-container select:focus {
+  border-color: #007bff; /* Highlight the input box and select on focus */
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add shadow on focus */
+}
+
+/* Dropdown select */
+.filter-container select {
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.filter-container select:hover {
+  background-color: #f1f1f1; /* Change background color on hover */
+}
+
+.filter-container label {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Kanban Board Layout */
+.kanban-board {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+  gap: 20px;
+}
+
+.kanban-column {
+  flex: 1;
+  min-width: 250px;
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.kanban-column h3 {
+  text-align: center;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #ddd;
+}
+
+.task-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.task-card {
+  background: #fff;
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.task-card h4 {
+  margin: 0 0 5px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.task-card p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.dashboard-buttons {
+  margin-top: 20px;
+}
+
+.add-task-button {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.logout-button {
+  background-color: #dc3545;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 /* Edit and More Details Buttons */
 .edit-button, .info-button {
   background-color: #007bff;  /* Blue for Edit */
