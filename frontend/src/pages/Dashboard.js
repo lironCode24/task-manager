@@ -95,6 +95,9 @@ function Dashboard() {
                         <h4>{task.title}</h4>
                         {/* <p>{task.description}</p> */}
                         <p><strong>Due:</strong> {new Date(task.dueDate).toLocaleDateString('en-GB')}</p>
+                        {task.status === "Completed" && task.completionDate && (
+                          <p><strong>Completed On:</strong> {new Date(task.completionDate).toLocaleDateString('en-GB')}</p>
+                        )}
                         <p><strong>Priority:</strong> {task.priority}</p>
                         <button 
                           className="edit-button" 

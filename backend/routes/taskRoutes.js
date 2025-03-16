@@ -69,13 +69,6 @@ router.put("/:id", authenticate, async (req, res) => {
   try {
     let updatedTask = { ...req.body };
 
-    // If status is changed to "Completed", set completionDate
-    if (status === "Completed") {
-      updatedTask.completionDate = new Date();
-    } else {
-      updatedTask.completionDate = null; // Reset if the status is changed back
-    }
-
     const task = await Task.findByIdAndUpdate(taskId, updatedTask, {
       new: true,
       runValidators: true,

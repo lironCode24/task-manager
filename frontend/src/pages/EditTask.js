@@ -51,18 +51,23 @@ function EditTask() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
+    
     let updatedTask = { ...task, [name]: value };
-
-    // Automatically set completionDate if task is marked "Completed"
-    if (name === "status" && value === "Completed") {
-      updatedTask.completionDate = today;
-    } else if (name === "status") {
-      updatedTask.completionDate = "";
+  
+    // Manually set completionDate when the user selects a date
+    if (name === "completionDate" && task.status === "Completed") {
+      updatedTask.completionDate = value;
     }
-
+  
+    // If the status is changed, clear the completionDate unless it's "Completed"
+    if (name === "status" && value !== "Completed") {
+      updatedTask.completionDate = ""; // Clear completionDate if status is not "Completed"
+    }
+  
     setTask(updatedTask);
   };
+  
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -175,21 +180,22 @@ function EditTask() {
           </select>
         </div>
 
-      {task.status === "Completed" && (
-        <div>
-          <label htmlFor="completionDate">Completion Date</label>
-          <input
-            type="date"
-            id="completionDate"
-            name="completionDate"
-            value={task.completionDate ? task.completionDate.split("T")[0] : ""}
-            min="1900-01-01" // Allow past dates
-            max={new Date().toISOString().split("T")[0]} // Restrict future dates
-            onChange={handleChange}
-            required
-          />
-        </div>
-      )}
+        {task.status === "Completed" && (
+          <div>
+            <label htmlFor="completionDate">Completion Date</label>
+            <input
+              type="date"
+              id="completionDate"
+              name="completionDate"
+              value={task.completionDate || ""}
+              min="1900-01-01" // Allow past dates
+              max={new Date().toISOString().split("T")[0]} // Restrict future dates
+              onChange={handleChange}
+              required
+            />
+          </div>
+        )}
+
 
 
         {/* Submit Button */}
