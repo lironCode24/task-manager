@@ -5,7 +5,7 @@ const authenticate = require('../middleware/authenticate');
 
 // Route to handle task creation
 router.post('/tasks', authenticate, async (req, res) => {
-  const { title, description, dueDate, priority, status } = req.body;
+  const { title, description, dueDate, priority, status, completionDate } = req.body;
   const userId = req.user.id;  // Extracted from the token
 
   try {
@@ -15,7 +15,8 @@ router.post('/tasks', authenticate, async (req, res) => {
       dueDate,
       priority,
       status,
-      userId,  // Store the userId from the token
+      userId,  
+      completionDate,  
     });
 
     await newTask.save();  // Save the new task to the database
@@ -25,6 +26,7 @@ router.post('/tasks', authenticate, async (req, res) => {
     res.status(500).json({ message: "Error adding task" });
   }
 });
+
 
 // Get all tasks for the authenticated user
 router.get('/getTasks', authenticate, async (req, res) => {

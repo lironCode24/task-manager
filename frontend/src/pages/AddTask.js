@@ -33,7 +33,9 @@ const AddTask = () => {
       description,
       dueDate,
       priority,
-      status,      ...(status === "Completed" && { completionDate }) // Only include if completed
+      status,    
+      ...(status === "Completed" && { completionDate }) // Only include if completed
+
     };
     
     const token = localStorage.getItem("token");
@@ -139,7 +141,7 @@ const AddTask = () => {
               <input
                 type="date"
                 id="completionDate"
-                value={completionDate}
+                value={completionDate || ""}
                 min="1900-01-01" // Allow any past date
                 max={today} // Restrict future dates
                 onChange={(e) => setCompletionDate(e.target.value)}
