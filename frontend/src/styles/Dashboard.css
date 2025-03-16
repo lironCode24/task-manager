@@ -83,3 +83,34 @@
     cursor: pointer;
   }
   
+  
+/* Edit and More Details Buttons */
+.edit-button, .info-button {
+  background-color: #007bff;  /* Blue for Edit */
+  color: white;
+  padding: 12px 20px; /* Larger padding for a comfortable click area */
+  border: none;
+  border-radius: 8px;  /* Rounded corners */
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px; /* Add spacing between buttons and task content */
+  width: 100%; /* Make buttons fill the container for symmetry */
+  transition: all 0.3s ease; /* Smooth transition for hover effects */
+}
+
+.info-button {
+  background-color: #28a745; /* Green for More Details */
+}
+
+.edit-button:hover, .info-button:hover {
+  background-color: #0056b3; /* Darker blue for Edit on hover */
+}
+
+.info-button:hover {
+  background-color: #218838; /* Darker green for More Details on hover */
+}
+
+.edit-button:focus, .info-button:focus {
+  outline: none;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.5); /* Focus effect */
+}

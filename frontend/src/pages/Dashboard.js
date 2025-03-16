@@ -99,12 +99,22 @@ function Dashboard() {
                           <p><strong>Completed On:</strong> {new Date(task.completionDate).toLocaleDateString('en-GB')}</p>
                         )}
                         <p><strong>Priority:</strong> {task.priority}</p>
+                        
+                        <div className="dashboard-buttons">
                         <button 
                           className="edit-button" 
                           onClick={() => navigate(`/edit-task/${task._id}`)}
                         >
                           Edit
                         </button>
+
+                        <button 
+                          className="info-button" 
+                          onClick={() => navigate(`/task-info/${task._id}`)}
+                        >
+                          More details
+                        </button>
+                        </div>
                       </div>
                     ))
                   )}

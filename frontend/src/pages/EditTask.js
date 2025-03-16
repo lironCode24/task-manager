@@ -209,7 +209,7 @@ function EditTask() {
           padding: "10px 20px",
           fontSize: "16px",
           cursor: "pointer",
-          backgroundColor: "red",
+          backgroundColor: "blue",
         }}
       >
         Back to dashboard

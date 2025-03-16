@@ -8,6 +8,7 @@ import UserInfo from "./pages/UserInfo";
 import Dashboard from "./pages/Dashboard";
 import AddTask from "./pages/AddTask"; // Import the AddTask component
 import EditTask from "./pages/EditTask";
+import TaskInfo from "./pages/TaskInfo";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/add-task" element={<AddTask />} /> {/* Add route for AddTask */}
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/edit-task/:id" element={<EditTask />} />
+        <Route path="/task-info/:id" element={<TaskInfo />} />
       </Routes>
     </Router>
   );
