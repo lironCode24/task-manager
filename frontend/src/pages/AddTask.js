@@ -9,17 +9,16 @@ const AddTask = () => {
   const [priority, setPriority] = useState("Medium");
   const [status, setStatus] = useState("Not Started");
   const [errorMessage, setErrorMessage] = useState("");
+  const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
+  const [completionDate, setCompletionDate] = useState(today);
   const navigate = useNavigate();
-
-  
-  // Get today's date in YYYY-MM-DD format
-  const today = new Date().toISOString().split("T")[0];
 
   // Get 5 years from today in YYYY-MM-DD format
   const oneYearLater = new Date();
   oneYearLater.setFullYear(oneYearLater.getFullYear() + 5);
   const maxDate = oneYearLater.toISOString().split("T")[0];
-
+  
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -34,8 +33,9 @@ const AddTask = () => {
       description,
       dueDate,
       priority,
-      status
+      status,      ...(status === "Completed" && { completionDate }) // Only include if completed
     };
+    
     const token = localStorage.getItem("token");
 
     // Send task data to the backend
@@ -123,12 +123,31 @@ const AddTask = () => {
           <select
             id="status"
             value={status}
-            onChange={(e) => setStatus(e.target.value)}
-          >
+            onChange={(e) => {
+              setStatus(e.target.value);
+              setCompletionDate(e.target.value === "Completed" ? today : ""); // Auto-set or clear
+            }}          >
             <option value="Not Started">Not Started</option>
             <option value="In Progress">In Progress</option>
             <option value="Completed">Completed</option>
           </select>
+
+          
+          {status === "Completed" && (
+            <div>
+              <label htmlFor="completionDate">Completion Date</label>
+              <input
+                type="date"
+                id="completionDate"
+                value={completionDate}
+                min="1900-01-01" // Allow any past date
+                max={today} // Restrict future dates
+                onChange={(e) => setCompletionDate(e.target.value)}
+                required
+              />
+            </div>
+          )}
+
         </div>
 
         {/* Error Message */}

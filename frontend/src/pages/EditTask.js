@@ -1,25 +1,46 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import "../styles/AddTask.css"; 
+import "../styles/AddTask.css";
 
 function EditTask() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [task, setTask] = useState({ title: "", description: "", priority: "", status: "", dueDate: "" });
-  const [errorMessage, setErrorMessage] = useState(""); 
-  const [successMessage, setSuccessMessage] = useState(""); 
+  const [task, setTask] = useState({
+    title: "",
+    description: "",
+    priority: "Medium",
+    status: "Not Started",
+    dueDate: "",
+    completionDate: "",
+  });
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const today = new Date().toISOString().split("T")[0];
+
+  // Restrict future due dates to 5 years from today
+  const fiveYearsLater = new Date();
+  fiveYearsLater.setFullYear(fiveYearsLater.getFullYear() + 5);
+  const maxDate = fiveYearsLater.toISOString().split("T")[0];
 
   useEffect(() => {
     const token = localStorage.getItem("token");
 
     const fetchTask = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/tasks/getTaskById?id=${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await fetch(
+          `http://localhost:5000/api/tasks/getTaskById?id=${id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
         const data = await response.json();
-        setTask(data);
+        setTask({
+          ...data,
+          dueDate: data.dueDate ? data.dueDate.split("T")[0] : "",
+          completionDate: data.completionDate ? data.completionDate.split("T")[0] : "",
+        });
       } catch (error) {
         console.error("Error fetching task:", error);
       }
@@ -29,18 +50,33 @@ function EditTask() {
   }, [id]);
 
   const handleChange = (e) => {
-    setTask({ ...task, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    let updatedTask = { ...task, [name]: value };
+
+    // Automatically set completionDate if task is marked "Completed"
+    if (name === "status" && value === "Completed") {
+      updatedTask.completionDate = today;
+    } else if (name === "status") {
+      updatedTask.completionDate = "";
+    }
+
+    setTask(updatedTask);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
 
-    // Simple validation checks
     if (!task.title || !task.description || !task.dueDate) {
-      setErrorMessage("Please fill in all the required fields.");
+      setErrorMessage("Please fill in all required fields.");
       return;
     }
+
+    const taskData = {
+      ...task,
+      ...(task.status === "Completed" ? { completionDate: task.completionDate } : {}),
+    };
 
     try {
       const response = await fetch(`http://localhost:5000/api/tasks/${id}`, {
@@ -49,15 +85,15 @@ function EditTask() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(task),
+        body: JSON.stringify(taskData),
       });
 
       if (response.ok) {
         setSuccessMessage("Task updated successfully! ✅");
         setTimeout(() => {
           setSuccessMessage("");
-          navigate("/dashboard"); 
-        }, 2000); // 2 seconds delay
+          navigate("/dashboard");
+        }, 2000);
       } else {
         setErrorMessage("Failed to update task.");
       }
@@ -69,55 +105,52 @@ function EditTask() {
   return (
     <div className="task-form-container">
       <h2>Edit Task</h2>
-      
-      {/* Display success message */}
-      {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
 
-      {/* Display error message */}
+      {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
-      
+
       <form onSubmit={handleSubmit}>
-        {/* Title Field */}
+        {/* Title */}
         <div>
           <label htmlFor="title">Title *</label>
           <input
             type="text"
             id="title"
             name="title"
-            placeholder="Enter task title"
             value={task.title}
             onChange={handleChange}
             required
           />
         </div>
 
-        {/* Description Field */}
+        {/* Description */}
         <div>
           <label htmlFor="description">Description *</label>
           <textarea
             id="description"
             name="description"
-            placeholder="Enter task description"
             value={task.description}
             onChange={handleChange}
             required
           />
         </div>
 
-        {/* Due Date Field */}
+        {/* Due Date */}
         <div>
           <label htmlFor="dueDate">Due Date *</label>
           <input
             type="date"
             id="dueDate"
             name="dueDate"
-            value={task.dueDate ? task.dueDate.split("T")[0] : ""}
+            value={task.dueDate}
             onChange={handleChange}
+            min={today}
+            max={maxDate}
             required
           />
         </div>
 
-        {/* Priority Field */}
+        {/* Priority */}
         <div>
           <label htmlFor="priority">Priority</label>
           <select
@@ -132,26 +165,38 @@ function EditTask() {
           </select>
         </div>
 
-        {/* Status Field */}
+        {/* Status */}
         <div>
           <label htmlFor="status">Status</label>
-          <select
-            id="status"
-            name="status"
-            value={task.status}
-            onChange={handleChange}
-          >
+          <select id="status" name="status" value={task.status} onChange={handleChange}>
             <option value="Not Started">Not Started</option>
             <option value="In Progress">In Progress</option>
             <option value="Completed">Completed</option>
           </select>
         </div>
 
+      {task.status === "Completed" && (
+        <div>
+          <label htmlFor="completionDate">Completion Date</label>
+          <input
+            type="date"
+            id="completionDate"
+            name="completionDate"
+            value={task.completionDate ? task.completionDate.split("T")[0] : ""}
+            min="1900-01-01" // Allow past dates
+            max={new Date().toISOString().split("T")[0]} // Restrict future dates
+            onChange={handleChange}
+            required
+          />
+        </div>
+      )}
+
+
         {/* Submit Button */}
         <button type="submit">Save Changes</button>
       </form>
-      
-      {/* Back to dashboard Button */}
+
+      {/* Back to dashboard */}
       <button
         onClick={() => navigate("/dashboard")}
         style={{

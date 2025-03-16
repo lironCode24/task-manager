@@ -30,7 +30,7 @@ router.post('/tasks', authenticate, async (req, res) => {
 router.get('/getTasks', authenticate, async (req, res) => {
   try {
     const userId = req.user.id;  // Extract user ID from token
-    console.log("Fetching tasks for user:", userId); // Debugging
+    // console.log("Fetching tasks for user:", userId); // Debugging
 
     const tasks = await Task.find({ userId }); // Query tasks linked to user
     res.status(200).json(tasks);
@@ -62,16 +62,23 @@ router.get('/getTaskById', authenticate, async (req, res) => {
   }
 });
 
-
-// Update Task by ID
 router.put("/:id", authenticate, async (req, res) => {
   const taskId = req.params.id;
-  const updatedTask = req.body;
-
+  let { status } = req.body;
+  
   try {
+    let updatedTask = { ...req.body };
+
+    // If status is changed to "Completed", set completionDate
+    if (status === "Completed") {
+      updatedTask.completionDate = new Date();
+    } else {
+      updatedTask.completionDate = null; // Reset if the status is changed back
+    }
+
     const task = await Task.findByIdAndUpdate(taskId, updatedTask, {
-      new: true, // Return the updated task
-      runValidators: true, // Ensure new data is validated
+      new: true,
+      runValidators: true,
     });
 
     if (!task) {
@@ -80,8 +87,10 @@ router.put("/:id", authenticate, async (req, res) => {
 
     res.status(200).json(task);
   } catch (error) {
+    console.error("Error updating task:", error);
     res.status(500).json({ message: "Error updating task" });
   }
 });
+
 
 module.exports = router;

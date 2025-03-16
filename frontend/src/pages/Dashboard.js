@@ -23,6 +23,10 @@ function Dashboard() {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await response.json();
+        if(data.username.length<2){
+          
+        navigate("/login"); 
+        }
         setUserData(data);
       } catch (error) {
         console.error("Error fetching user data:", error);
