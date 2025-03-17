@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Dashboard.css"; 
 
-
 import profileIcon1 from "../images/profileIcon1.jpg";
 import profileIcon2 from "../images/profileIcon2.jpg";
 import profileIcon3 from "../images/profileIcon3.jpg";
@@ -13,24 +12,24 @@ import profileIcon6 from "../images/profileIcon6.jpg";
 function Dashboard() {
   const [userData, setUserData] = useState(null);
   const [tasks, setTasks] = useState([]);
-  const [searchQuery, setSearchQuery] = useState(""); // State for search query
-  const [priorityFilter, setPriorityFilter] = useState(""); // State for priority filter
+  const [searchQuery, setSearchQuery] = useState(""); // Search query state
+  const [priorityFilter, setPriorityFilter] = useState(""); // Priority filter state
+  const [assigneeFilter, setAssigneeFilter] = useState(""); // Assignee filter state
+
   const navigate = useNavigate();
 
-  
-const icons = {
-  profileIcon1,
-  profileIcon2,
-  profileIcon3,
-  profileIcon4,
-  profileIcon5,
-  profileIcon6,
-};
+  const icons = {
+    profileIcon1,
+    profileIcon2,
+    profileIcon3,
+    profileIcon4,
+    profileIcon5,
+    profileIcon6,
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    // If there is no token or it's invalid, redirect to login page
     if (!token) {
       navigate("/login");
       return;
@@ -75,6 +74,9 @@ const icons = {
     navigate("/login");
   };
 
+  // Extract unique assignees from tasks
+  const uniqueAssignees = [...new Set(tasks.map(task => task.assignee))];
+
   // Categorizing tasks by status
   const categorizedTasks = {
     "Not Started": tasks.filter((task) => task.status === "Not Started"),
@@ -82,7 +84,7 @@ const icons = {
     "Completed": tasks.filter((task) => task.status === "Completed"),
   };
 
-  // Filtering tasks based on title, priority, or due date
+  // Filtering tasks based on search query, priority, and assignee
   const filteredTasks = Object.fromEntries(
     Object.entries(categorizedTasks).map(([status, taskList]) => [
       status,
@@ -90,7 +92,8 @@ const icons = {
         (task) =>
           (task.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
             task.description.toLowerCase().includes(searchQuery.toLowerCase())) &&
-          (priorityFilter ? task.priority === priorityFilter : true) // Filter by priority
+          (priorityFilter ? task.priority === priorityFilter : true) &&
+          (assigneeFilter ? task.assignee === assigneeFilter : true) // Filter by assignee
       ),
     ])
   );
@@ -103,7 +106,7 @@ const icons = {
         src={icons[userData?.avatar] || "/default-profile.png"} 
         alt="User Profile"
         className="user-icon" 
-        style={{ width: '80px', height: '80px', borderRadius: '50%' }}  // Directly set size here
+        style={{ width: '80px', height: '80px', borderRadius: '50%' }}
         onClick={() => navigate("/user-info")}
       />
 
@@ -119,7 +122,7 @@ const icons = {
               type="text"
               placeholder="Search tasks by title or description..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)} // Update search query on input change
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
 
@@ -138,6 +141,23 @@ const icons = {
             </select>
           </div>
 
+          {/* Assignee Filter */}
+          <div className="filter-container">
+            <label htmlFor="assigneeFilter">Filter by Assignee: </label>
+            <select
+              id="assigneeFilter"
+              value={assigneeFilter}
+              onChange={(e) => setAssigneeFilter(e.target.value)}
+            >
+              <option value="">All Assignees</option>
+              {uniqueAssignees.map((assignee) => (
+                <option key={assignee} value={assignee}>
+                  {assignee}
+                </option>
+              ))}
+            </select>
+          </div>
+
           {/* Kanban Board Layout */}
           <div className="kanban-board">
             {Object.entries(filteredTasks).map(([status, taskList]) => (
@@ -150,12 +170,12 @@ const icons = {
                     taskList.map((task) => (
                       <div key={task._id} className="task-card">
                         <h4>{task.title}</h4>
-                        {/* <p>{task.description}</p> */}
                         <p><strong>Due:</strong> {new Date(task.dueDate).toLocaleDateString('en-GB')}</p>
                         {task.status === "Completed" && task.completionDate && (
                           <p><strong>Completed On:</strong> {new Date(task.completionDate).toLocaleDateString('en-GB')}</p>
                         )}
                         <p><strong>Priority:</strong> {task.priority}</p>
+                        <p><strong>Assignee:</strong> {task.assignee}</p>
                         
                         <div className="dashboard-buttons">
                           <button 

@@ -12,7 +12,8 @@ function EditTask() {
     status: "Not Started",
     dueDate: "",
     completionDate: "",
-    notes: "" // Add the notes field
+    notes: "" ,
+    assignee: "" ,
   });
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -41,7 +42,8 @@ function EditTask() {
           ...data,
           dueDate: data.dueDate ? data.dueDate.split("T")[0] : "",
           completionDate: data.completionDate ? data.completionDate.split("T")[0] : "",
-          notes: data.notes || "", // Set notes if available
+          notes: data.notes || "", 
+          assignee: data.assignee || "", 
         });
       } catch (error) {
         console.error("Error fetching task:", error);
@@ -203,6 +205,18 @@ function EditTask() {
             id="notes"
             name="notes"
             value={task.notes}
+            onChange={handleChange}
+          />
+        </div>
+
+        
+        {/* Assignee Field */}
+        <div>
+          <label htmlFor="assignee">Assignee</label>
+          <textarea
+            id="assignee"
+            name="assignee"
+            value={task.assignee}
             onChange={handleChange}
           />
         </div>

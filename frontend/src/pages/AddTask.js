@@ -8,7 +8,8 @@ const AddTask = () => {
   const [dueDate, setDueDate] = useState("");
   const [priority, setPriority] = useState("Medium");
   const [status, setStatus] = useState("Not Started");
-  const [notes, setNotes] = useState(""); // New state for notes
+  const [notes, setNotes] = useState(""); 
+  const [assignee, setAssignee] = useState(""); 
   const [errorMessage, setErrorMessage] = useState("");
   const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
   const [completionDate, setCompletionDate] = useState(today);
@@ -34,7 +35,8 @@ const AddTask = () => {
       dueDate,
       priority,
       status,    
-      notes, // Add notes to task data
+      notes,
+      assignee,
       ...(status === "Completed" && { completionDate }) // Only include if completed
     };
     
@@ -159,6 +161,18 @@ const AddTask = () => {
             placeholder="Optional task notes"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
+          />
+        </div>
+
+        
+        {/* assignee Field */}
+        <div>
+          <label htmlFor="assignee">Assignee</label>
+          <textarea
+            id="assignee"
+            placeholder="Optional assignee"
+            value={assignee}
+            onChange={(e) => setAssignee(e.target.value)}
           />
         </div>
 

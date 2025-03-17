@@ -32,6 +32,9 @@ const taskSchema = new mongoose.Schema({
   notes: {
     type: String, // Free text notes field for extra information
   },
+  assignee: {
+    type: String, // Free text - can be change to real username
+  },
 }, {
   timestamps: true, // Automatically adds createdAt and updatedAt fields
 });

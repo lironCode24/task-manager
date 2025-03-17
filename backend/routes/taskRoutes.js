@@ -6,7 +6,7 @@ const authenticate = require('../middleware/authenticate');
 // Route to handle task creation
 
 router.post('/tasks', authenticate, async (req, res) => {
-  const { title, description, dueDate, priority, status, completionDate, notes } = req.body;
+  const { title, description, dueDate, priority, status, completionDate, notes ,assignee } = req.body;
   const userId = req.user.id;  // Extracted from the token
 
   try {
@@ -18,7 +18,8 @@ router.post('/tasks', authenticate, async (req, res) => {
       status,
       userId,
       completionDate,
-      notes,  // Include the notes field
+      notes,  
+      assignee,
     });
 
     await newTask.save();  // Save the new task to the database
@@ -68,10 +69,10 @@ router.get('/getTaskById', authenticate, async (req, res) => {
 
 router.put("/:id", authenticate, async (req, res) => {
   const taskId = req.params.id;
-  const { title, description, dueDate, priority, status, completionDate, notes } = req.body;
+  const { title, description, dueDate, priority, status, completionDate, notes, assignee } = req.body;
   
   try {
-    let updatedTask = { title, description, dueDate, priority, status, completionDate, notes }; // Include notes here
+    let updatedTask = { title, description, dueDate, priority, status, completionDate, notes,assignee }; 
 
     const task = await Task.findByIdAndUpdate(taskId, updatedTask, {
       new: true,
