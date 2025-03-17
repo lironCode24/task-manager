@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaUserAlt } from "react-icons/fa"; // Using FontAwesome React icons for profile
 import "../styles/Dashboard.css"; 
+
+
+import profileIcon1 from "../images/profileIcon1.jpg";
+import profileIcon2 from "../images/profileIcon2.jpg";
+import profileIcon3 from "../images/profileIcon3.jpg";
+import profileIcon4 from "../images/profileIcon4.jpg";
+import profileIcon5 from "../images/profileIcon5.jpg";
+import profileIcon6 from "../images/profileIcon6.jpg";
 
 function Dashboard() {
   const [userData, setUserData] = useState(null);
@@ -9,6 +16,16 @@ function Dashboard() {
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
   const [priorityFilter, setPriorityFilter] = useState(""); // State for priority filter
   const navigate = useNavigate();
+
+  
+const icons = {
+  profileIcon1,
+  profileIcon2,
+  profileIcon3,
+  profileIcon4,
+  profileIcon5,
+  profileIcon6,
+};
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -81,11 +98,14 @@ function Dashboard() {
   return (
     <div className="dashboard-container">
       <h2>Dashboard</h2>
-
-      {/* User Info Icon */}
-      <div className="user-icon">
-        <FaUserAlt onClick={() => navigate("/user-info")} />
-      </div>
+      
+      <img
+        src={icons[userData?.avatar] || "/default-profile.png"} 
+        alt="User Profile"
+        className="user-icon" 
+        style={{ width: '80px', height: '80px', borderRadius: '50%' }}  // Directly set size here
+        onClick={() => navigate("/user-info")}
+      />
 
       {!userData ? (
         <p>Loading...</p>

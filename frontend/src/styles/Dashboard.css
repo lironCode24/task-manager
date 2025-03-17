@@ -8,9 +8,12 @@
   position: absolute;
   top: 20px;
   right: 20px;
-  font-size: 30px;
+  width: 40px; /* Set a smaller size */
+  height: 40px; /* Set a smaller size */
+  border-radius: 50%; /* Make it round */
   cursor: pointer;
   color: #007bff;
+  object-fit: cover; /* Ensure the image fills the circle properly */
 }
 
 /* Search and Filter Section */
@@ -157,3 +160,4 @@
   outline: none;
   box-shadow: 0 0 8px rgba(0, 123, 255, 0.5); /* Focus effect */
 }
+
