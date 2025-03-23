@@ -162,7 +162,7 @@
 }
 
 .toggle-filters-button {
-  background-color: #007bff;
+  background-color: #93e772;
   color: white;
   border: none;
   padding: 10px;
@@ -173,7 +173,7 @@
 }
 
 .toggle-filters-button:hover {
-  background-color: #0056b3;
+  background-color: #51d41d;
 }
 
 .filtering-container {
