@@ -54,4 +54,39 @@ router.post("/update-avatar", authenticate, async (req, res) => {
   }
 });
 
+// Get user ID based on username (protected route)
+router.get("/getUserId/:username", authenticate, async (req, res) => {
+  try {
+    const { username } = req.params;
+    const user = await User.findOne({ username }, "_id"); // Fetch only the user ID
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ userId: user._id });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Get username based on user ID (protected route)
+router.get("/getUsername/:userId", authenticate, async (req, res) => {
+  try {
+    const { userId } = req.params;  // Get userId from the URL parameter
+    const user = await User.findById(userId, "username");  // Fetch the username based on userId
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ username: user.username });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 module.exports = router;

@@ -18,7 +18,7 @@ router.post('/tasks', authenticate, async (req, res) => {
       userId,
       completionDate,
       notes,  
-      assignee,
+      assignee
     });
 
     await newTask.save();  // Save the new task to the database
@@ -34,11 +34,14 @@ router.get('/getTasks', authenticate, async (req, res) => {
   try {
     const userId = req.user.id;  // Extract user ID from token
 
+    // Access the username from the request headers
+    const username = req.headers['username']; 
+    console.log(username)
     // Query tasks where either the user is the creator (userId) or the assignee
     const tasks = await Task.find({
       $or: [
         { userId },           // Tasks where user is the creator
-        { assigneeId: userId } // Tasks where user is the assignee
+        { assignee: username } // Tasks where user is the assignee
       ]
     });
 

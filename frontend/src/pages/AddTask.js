@@ -49,12 +49,12 @@ const AddTask = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!title || !description || !dueDate) {
+  
+    if (!title || !description || !dueDate || !assignee) {
       setErrorMessage("Please fill in all the required fields.");
       return;
     }
-
+  
     const taskData = {
       title,
       description,
@@ -65,9 +65,9 @@ const AddTask = () => {
       assignee,
       ...(status === "Completed" && { completionDate }) 
     };
-    
+  
     const token = localStorage.getItem("token");
-
+  
     try {
       const response = await fetch("http://localhost:5000/api/tasks/tasks", {
         method: "POST",
@@ -77,7 +77,7 @@ const AddTask = () => {
         },
         body: JSON.stringify(taskData),
       });
-
+  
       if (response.ok) {
         navigate("/dashboard");
       } else {
@@ -88,6 +88,7 @@ const AddTask = () => {
       setErrorMessage("Error connecting to the server.");
     }
   };
+  
 
   return (
     <div className="task-form-container">

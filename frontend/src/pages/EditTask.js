@@ -89,17 +89,31 @@ function EditTask() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
-
+  
     if (!task.title || !task.description || !task.dueDate) {
       setErrorMessage("Please fill in all required fields.");
       return;
     }
 
+    // Find the user object from the users list based on the selected assignee's username
+    const selectedUser = users.find((user) => user.username === task.assignee);
+  
+    if (!selectedUser) {
+      setErrorMessage("Selected assignee not found.");
+      return;
+    }
+  
     const taskData = {
-      ...task,
-      ...(task.status === "Completed" ? { completionDate: task.completionDate } : {}),
+      title: task.title,
+      description: task.description,
+      dueDate: task.dueDate,
+      priority: task.priority,
+      status: task.status,
+      notes: task.notes,
+      assignee:task.assignee,
+      ...(task.status === "Completed" && { completionDate: task.completionDate }),
     };
-
+  
     try {
       const response = await fetch(`http://localhost:5000/api/tasks/${id}`, {
         method: "PUT",
@@ -107,9 +121,9 @@ function EditTask() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(task),
+        body: JSON.stringify(taskData),
       });
-
+  
       if (response.ok) {
         setSuccessMessage("Task updated successfully! ✅");
         setTimeout(() => {
@@ -123,6 +137,7 @@ function EditTask() {
       setErrorMessage("Error updating task.");
     }
   };
+  
 
    // Delete Task Function
    const handleDelete = async () => {

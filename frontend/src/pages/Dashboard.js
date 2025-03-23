@@ -52,19 +52,36 @@ function Dashboard() {
         navigate("/login");
       }
     };
-
     const fetchUserTasks = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/tasks/getTasks", {
+        const response = await fetch("http://localhost:5000/api/user/data", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const data = await response.json();
-        setTasks(Array.isArray(data) ? data : []);
+    
+        if (response.ok) {
+          const data = await response.json();
+          const username = data.username; // Get the username from the response
+    
+          // Now fetch the tasks, passing the username in the header
+          const taskResponse = await fetch("http://localhost:5000/api/tasks/getTasks", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "username": username, // Send the username as a custom header
+            },
+          });
+    
+          const taskData = await taskResponse.json();
+          setTasks(Array.isArray(taskData) ? taskData : []);
+        } else {
+          console.log("Failed to fetch username.");
+        }
       } catch (error) {
         console.error("Error fetching tasks:", error);
         setTasks([]);
       }
     };
+    
+    
 
     fetchUserData();
     fetchUserTasks();
