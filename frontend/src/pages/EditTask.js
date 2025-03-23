@@ -109,6 +109,31 @@ function EditTask() {
     }
   };
 
+   // Delete Task Function
+   const handleDelete = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!window.confirm("Are you sure you want to delete this task?")) return;
+
+    try {
+      const response = await fetch(`http://localhost:5000/api/tasks/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        alert("Task deleted successfully!");
+        navigate("/dashboard");
+      } else {
+        setErrorMessage("Failed to delete task.");
+      }
+    } catch (error) {
+      setErrorMessage("Error deleting task.");
+    }
+  };
+
   return (
     <div className="task-form-container">
       <h2>Edit Task</h2>
@@ -224,6 +249,23 @@ function EditTask() {
         {/* Submit Button */}
         <button type="submit">Save Changes</button>
       </form>
+
+
+      {/* Delete Task Button */}
+      <button
+        onClick={handleDelete}
+        style={{
+          padding: "10px 20px",
+          fontSize: "16px",
+          cursor: "pointer",
+          backgroundColor: "red",
+          color: "white",
+          marginTop: "10px",
+        }}
+      >
+        Delete Task
+      </button>
+
 
       {/* Back to dashboard */}
       <button
