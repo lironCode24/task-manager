@@ -36,7 +36,6 @@ router.get('/getTasks', authenticate, async (req, res) => {
 
     // Access the username from the request headers
     const username = req.headers['username']; 
-    console.log(username)
     // Query tasks where either the user is the creator (userId) or the assignee
     const tasks = await Task.find({
       $or: [

@@ -27,28 +27,47 @@ const AddTask = () => {
       return;
     }
     
-    // Fetch list of users from backend
-    const fetchUsers = async () => {
-      try {
-        const response = await fetch("http://localhost:5000/api/user/allUsers", {
+    
+  // Fetch list of users from backend
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/user/allUsers", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setUsers(data); // Assuming API returns an array of users
+        // Fetch the current user's data and set them as the default assignee
+        const userResponse = await fetch("http://localhost:5000/api/user/data", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (response.ok) {
-          const data = await response.json();
-          setUsers(data); // Assuming API returns an array of users
-        } else {
-          setErrorMessage("Failed to fetch users.");
-        }
-      } catch (error) {
-        setErrorMessage("Error fetching users.");
+        const userData = await userResponse.json();
+        setAssignee(userData.username); // Set the current user as the default assignee
+      } else {
+        setErrorMessage("Failed to fetch users.");
       }
-    };
+    } catch (error) {
+      setErrorMessage("Error fetching users.");
+    }
+  };
 
-    fetchUsers();
-  }, []);
+  fetchUsers();
+}, []);  // This effect runs only once when the component mounts
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
+    
+    // If assignee is not selected, set the current user as the assignee
+    if (!assignee) {
+      const token = localStorage.getItem("token");
+      const response = await fetch("http://localhost:5000/api/user/data", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await response.json();
+      const currentUser = data.username
+      setAssignee(currentUser);  // Set the assignee to the current user ID
+    }
   
     if (!title || !description || !dueDate || !assignee) {
       setErrorMessage("Please fill in all the required fields.");
