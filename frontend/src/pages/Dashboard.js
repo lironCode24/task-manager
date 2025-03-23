@@ -105,7 +105,6 @@ function Dashboard() {
 
   return (
     <div className="dashboard-container">
-      <h2>Dashboard</h2>
       
       <img
         src={icons[userData?.avatar] || "/default-profile.png"} 
