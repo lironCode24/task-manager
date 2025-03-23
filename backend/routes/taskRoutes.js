@@ -4,7 +4,6 @@ const Task = require('../models/Task');
 const authenticate = require('../middleware/authenticate');  
 
 // Route to handle task creation
-
 router.post('/tasks', authenticate, async (req, res) => {
   const { title, description, dueDate, priority, status, completionDate, notes ,assignee } = req.body;
   const userId = req.user.id;  // Extracted from the token
@@ -34,15 +33,22 @@ router.post('/tasks', authenticate, async (req, res) => {
 router.get('/getTasks', authenticate, async (req, res) => {
   try {
     const userId = req.user.id;  // Extract user ID from token
-    // console.log("Fetching tasks for user:", userId); // Debugging
 
-    const tasks = await Task.find({ userId }); // Query tasks linked to user
+    // Query tasks where either the user is the creator (userId) or the assignee
+    const tasks = await Task.find({
+      $or: [
+        { userId },           // Tasks where user is the creator
+        { assigneeId: userId } // Tasks where user is the assignee
+      ]
+    });
+
     res.status(200).json(tasks);
   } catch (error) {
     console.error("Error fetching tasks:", error);
     res.status(500).json({ message: "Server error" });
   }
 });
+
 
 // Route to get task by id
 router.get('/getTaskById', authenticate, async (req, res) => {

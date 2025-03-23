@@ -12,14 +12,14 @@ function EditTask() {
     status: "Not Started",
     dueDate: "",
     completionDate: "",
-    notes: "" ,
-    assignee: "" ,
+    notes: "",
+    assignee: "",
   });
+  const [users, setUsers] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
   const today = new Date().toISOString().split("T")[0];
-
   // Restrict future due dates to 5 years from today
   const fiveYearsLater = new Date();
   fiveYearsLater.setFullYear(fiveYearsLater.getFullYear() + 5);
@@ -42,20 +42,36 @@ function EditTask() {
           ...data,
           dueDate: data.dueDate ? data.dueDate.split("T")[0] : "",
           completionDate: data.completionDate ? data.completionDate.split("T")[0] : "",
-          notes: data.notes || "", 
-          assignee: data.assignee || "", 
+          notes: data.notes || "",
+          assignee: data.assignee || "",
         });
       } catch (error) {
         console.error("Error fetching task:", error);
       }
     };
 
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/user/allUsers", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setUsers(data);
+        } else {
+          setErrorMessage("Failed to fetch users.");
+        }
+      } catch (error) {
+        setErrorMessage("Error fetching users.");
+      }
+    };
+
     fetchTask();
+    fetchUsers();
   }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
     let updatedTask = { ...task, [name]: value };
   
     // Manually set completionDate when the user selects a date
@@ -67,7 +83,6 @@ function EditTask() {
     if (name === "status" && value !== "Completed") {
       updatedTask.completionDate = ""; // Clear completionDate if status is not "Completed"
     }
-  
     setTask(updatedTask);
   };
 
@@ -92,7 +107,7 @@ function EditTask() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(taskData),
+        body: JSON.stringify(task),
       });
 
       if (response.ok) {
@@ -137,10 +152,6 @@ function EditTask() {
   return (
     <div className="task-form-container">
       <h2>Edit Task</h2>
-
-      {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
-      {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
-
       <form onSubmit={handleSubmit}>
         {/* Title */}
         <div>
@@ -233,24 +244,20 @@ function EditTask() {
             onChange={handleChange}
           />
         </div>
+        <label>Assignee</label>
+        <select name="assignee" value={task.assignee} onChange={handleChange}>
+          <option value="">Select Assignee</option>
+          {users.map((user) => (
+            <option key={user.id} value={user.id}>{user.username}</option>
+          ))}
+        </select>
 
-        
-        {/* Assignee Field */}
-        <div>
-          <label htmlFor="assignee">Assignee</label>
-          <textarea
-            id="assignee"
-            name="assignee"
-            value={task.assignee}
-            onChange={handleChange}
-          />
-        </div>
+        {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+        {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
 
-        {/* Submit Button */}
-        <button type="submit">Save Changes</button>
+        <button type="submit">Update Task</button>
       </form>
-
-
+      
       {/* Delete Task Button */}
       <button
         onClick={handleDelete}

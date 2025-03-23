@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/AddTask.css"; 
 
@@ -10,20 +10,46 @@ const AddTask = () => {
   const [status, setStatus] = useState("Not Started");
   const [notes, setNotes] = useState(""); 
   const [assignee, setAssignee] = useState(""); 
+  const [users, setUsers] = useState([]); // Store list of users
   const [errorMessage, setErrorMessage] = useState("");
-  const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
+  const today = new Date().toISOString().split("T")[0]; 
   const [completionDate, setCompletionDate] = useState(today);
   const navigate = useNavigate();
 
-  // Get 5 years from today in YYYY-MM-DD format
   const oneYearLater = new Date();
   oneYearLater.setFullYear(oneYearLater.getFullYear() + 5);
   const maxDate = oneYearLater.toISOString().split("T")[0];
-  
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+    
+    // Fetch list of users from backend
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/user/allUsers", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setUsers(data); // Assuming API returns an array of users
+        } else {
+          setErrorMessage("Failed to fetch users.");
+        }
+      } catch (error) {
+        setErrorMessage("Error fetching users.");
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Simple validation checks
     if (!title || !description || !dueDate) {
       setErrorMessage("Please fill in all the required fields.");
       return;
@@ -37,101 +63,71 @@ const AddTask = () => {
       status,    
       notes,
       assignee,
-      ...(status === "Completed" && { completionDate }) // Only include if completed
+      ...(status === "Completed" && { completionDate }) 
     };
     
     const token = localStorage.getItem("token");
 
-    // Send task data to the backend
     try {
-        const response = await fetch("http://localhost:5000/api/tasks/tasks", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(taskData),
-        });
-  
-        if (response.ok) {
-          navigate("/dashboard");  // Redirect to dashboard after task is added
-        } else {
-          const error = await response.json();
-          setErrorMessage(error.message || "Failed to add task.");
-        }
-      } catch (error) {
-        setErrorMessage("Error connecting to the server.");
+      const response = await fetch("http://localhost:5000/api/tasks/tasks", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(taskData),
+      });
+
+      if (response.ok) {
+        navigate("/dashboard");
+      } else {
+        const error = await response.json();
+        setErrorMessage(error.message || "Failed to add task.");
       }
+    } catch (error) {
+      setErrorMessage("Error connecting to the server.");
+    }
   };
 
   return (
     <div className="task-form-container">
       <h2>Add Task</h2>
       <form onSubmit={handleSubmit}>
-        {/* Title Field */}
+        {/* Title */}
         <div>
           <label htmlFor="title">Title *</label>
-          <input
-            type="text"
-            id="title"
-            placeholder="Enter task title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-          />
+          <input type="text" id="title" value={title} onChange={(e) => setTitle(e.target.value)} required />
         </div>
 
-        {/* Description Field */}
+        {/* Description */}
         <div>
           <label htmlFor="description">Description *</label>
-          <textarea
-            id="description"
-            placeholder="Enter task description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-          />
+          <textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} required />
         </div>
 
-        {/* Due Date Field */}
+        {/* Due Date */}
         <div>
           <label htmlFor="dueDate">Due Date *</label>
-          <input
-            type="date"
-            id="dueDate"
-            value={dueDate}            
-            onChange={(e) => setDueDate(e.target.value)}
-            min={today}   // Restrict past dates
-            max={maxDate} // Restrict future dates beyond one year
-            required
-          />
+          <input type="date" id="dueDate" value={dueDate} onChange={(e) => setDueDate(e.target.value)} min={today} max={maxDate} required />
         </div>
 
-        {/* Priority Field */}
+        {/* Priority */}
         <div>
           <label htmlFor="priority">Priority</label>
-          <select
-            id="priority"
-            value={priority}
-            onChange={(e) => setPriority(e.target.value)}
-          >
+          <select id="priority" value={priority} onChange={(e) => setPriority(e.target.value)}>
             <option value="Low">Low</option>
             <option value="Medium">Medium</option>
             <option value="High">High</option>
           </select>
         </div>
 
-        {/* Status Field */}
+        {/* Status */}
         <div>
           <label htmlFor="status">Status</label>
-          <select
-            id="status"
-            value={status}
-            onChange={(e) => {
+          <select id="status" value={status} onChange={(e) => {
               setStatus(e.target.value);
-              setCompletionDate(e.target.value === "Completed" ? today : ""); // Auto-set or clear
-            }}          
-          >
+              setCompletionDate(e.target.value === "Completed" ? today : ""); 
+            }}>
             <option value="Not Started">Not Started</option>
             <option value="In Progress">In Progress</option>
             <option value="Completed">Completed</option>
@@ -140,57 +136,37 @@ const AddTask = () => {
           {status === "Completed" && (
             <div>
               <label htmlFor="completionDate">Completion Date</label>
-              <input
-                type="date"
-                id="completionDate"
-                value={completionDate || ""}
-                min="1900-01-01" // Allow any past date
-                max={today} // Restrict future dates
-                onChange={(e) => setCompletionDate(e.target.value)}
-                required
-              />
+              <input type="date" id="completionDate" value={completionDate || ""} min="1900-01-01" max={today} onChange={(e) => setCompletionDate(e.target.value)} required />
             </div>
           )}
         </div>
 
-        {/* Notes Field */}
+        {/* Notes */}
         <div>
           <label htmlFor="notes">Notes</label>
-          <textarea
-            id="notes"
-            placeholder="Optional task notes"
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-          />
+          <textarea id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} />
         </div>
 
-        
-        {/* assignee Field */}
+        {/* Assignee - Dropdown */}
         <div>
           <label htmlFor="assignee">Assignee</label>
-          <textarea
-            id="assignee"
-            placeholder="Optional assignee"
-            value={assignee}
-            onChange={(e) => setAssignee(e.target.value)}
-          />
+          <select id="assignee" value={assignee} onChange={(e) => setAssignee(e.target.value)}>
+            <option value="">Select Assignee</option>
+            {users.map((user) => (
+              <option key={user.id} value={user.id}>
+                {user.username}
+              </option>
+            ))}
+          </select>
         </div>
 
-        {/* Error Message */}
         {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
 
         {/* Submit Button */}
         <button type="submit">Add Task</button>
       </form>
-      <button
-        onClick={() => navigate("/dashboard")}
-        style={{
-          padding: "10px 20px",
-          fontSize: "16px",
-          cursor: "pointer",
-          backgroundColor: "blue",
-        }}
-      >
+
+      <button onClick={() => navigate("/dashboard")} style={{ padding: "10px 20px", fontSize: "16px", cursor: "pointer", backgroundColor: "blue" }}>
         Back to dashboard
       </button>
     </div>
