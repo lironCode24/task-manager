@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/Dashboard.css"; 
+import "../styles/Dashboard.css";
 
 import profileIcon1 from "../images/profileIcon1.jpg";
 import profileIcon2 from "../images/profileIcon2.jpg";
@@ -12,9 +12,10 @@ import profileIcon6 from "../images/profileIcon6.jpg";
 function Dashboard() {
   const [userData, setUserData] = useState(null);
   const [tasks, setTasks] = useState([]);
-  const [searchQuery, setSearchQuery] = useState(""); // Search query state
-  const [priorityFilter, setPriorityFilter] = useState(""); // Priority filter state
-  const [assigneeFilter, setAssigneeFilter] = useState(""); // Assignee filter state
+  const [searchQuery, setSearchQuery] = useState("");
+  const [priorityFilter, setPriorityFilter] = useState("");
+  const [assigneeFilter, setAssigneeFilter] = useState("");
+  const [showFilters, setShowFilters] = useState(false); // Toggle filter section
 
   const navigate = useNavigate();
 
@@ -29,7 +30,6 @@ function Dashboard() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-
     if (!token) {
       navigate("/login");
       return;
@@ -42,12 +42,12 @@ function Dashboard() {
         });
         const data = await response.json();
         if (data.username.length < 2) {
-          navigate("/login"); 
+          navigate("/login");
         }
         setUserData(data);
       } catch (error) {
         console.error("Error fetching user data:", error);
-        navigate("/login"); 
+        navigate("/login");
       }
     };
 
@@ -68,23 +68,19 @@ function Dashboard() {
     fetchUserTasks();
   }, [navigate]);
 
-  // Logout function
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
 
-  // Extract unique assignees from tasks
   const uniqueAssignees = [...new Set(tasks.map(task => task.assignee))];
 
-  // Categorizing tasks by status
   const categorizedTasks = {
     "Not Started": tasks.filter((task) => task.status === "Not Started"),
     "In Progress": tasks.filter((task) => task.status === "In Progress"),
     "Completed": tasks.filter((task) => task.status === "Completed"),
   };
 
-  // Filtering tasks based on search query, priority, and assignee
   const filteredTasks = Object.fromEntries(
     Object.entries(categorizedTasks).map(([status, taskList]) => [
       status,
@@ -93,7 +89,7 @@ function Dashboard() {
           (task.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
             task.description.toLowerCase().includes(searchQuery.toLowerCase())) &&
           (priorityFilter ? task.priority === priorityFilter : true) &&
-          (assigneeFilter ? task.assignee === assigneeFilter : true) // Filter by assignee
+          (assigneeFilter ? task.assignee === assigneeFilter : true)
       ),
     ])
   );
@@ -106,7 +102,6 @@ function Dashboard() {
         src={icons[userData?.avatar] || "/default-profile.png"} 
         alt="User Profile"
         className="user-icon" 
-        style={{ width: '80px', height: '80px', borderRadius: '50%' }}
         onClick={() => navigate("/user-info")}
       />
 
@@ -116,49 +111,59 @@ function Dashboard() {
         <>
           <h3>Hi, {userData.username}!</h3>
 
-          {/* Search Bar */}
-          <div className="search-container">
-            <input
-              type="text"
-              placeholder="Search tasks by title or description..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
+          {/* Toggle Filter Section Button */}
+          <button 
+            className="toggle-filters-button"
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            {showFilters ? "Hide Filters" : "Show Filters"}
+          </button>
 
-          {/* Priority Filter */}
-          <div className="filter-container">
-            <label htmlFor="priorityFilter">Filter by Priority: </label>
-            <select
-              id="priorityFilter"
-              value={priorityFilter}
-              onChange={(e) => setPriorityFilter(e.target.value)}
-            >
-              <option value="">All Priorities</option>
-              <option value="High">High</option>
-              <option value="Medium">Medium</option>
-              <option value="Low">Low</option>
-            </select>
-          </div>
+          {/* Filters Section (Collapsible) */}
+          {showFilters && (
+            <div className="filtering-container">
+              <div className="search-container">
+                <input
+                  type="text"
+                  placeholder="Search tasks..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
 
-          {/* Assignee Filter */}
-          <div className="filter-container">
-            <label htmlFor="assigneeFilter">Filter by Assignee: </label>
-            <select
-              id="assigneeFilter"
-              value={assigneeFilter}
-              onChange={(e) => setAssigneeFilter(e.target.value)}
-            >
-              <option value="">All Assignees</option>
-              {uniqueAssignees.map((assignee) => (
-                <option key={assignee} value={assignee}>
-                  {assignee}
-                </option>
-              ))}
-            </select>
-          </div>
+              <div className="filter-container">
+                <label htmlFor="priorityFilter">Priority: </label>
+                <select
+                  id="priorityFilter"
+                  value={priorityFilter}
+                  onChange={(e) => setPriorityFilter(e.target.value)}
+                >
+                  <option value="">All</option>
+                  <option value="High">High</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Low">Low</option>
+                </select>
+              </div>
 
-          {/* Kanban Board Layout */}
+              <div className="filter-container">
+                <label htmlFor="assigneeFilter">Assignee: </label>
+                <select
+                  id="assigneeFilter"
+                  value={assigneeFilter}
+                  onChange={(e) => setAssigneeFilter(e.target.value)}
+                >
+                  <option value="">All</option>
+                  {uniqueAssignees.map((assignee) => (
+                    <option key={assignee} value={assignee}>
+                      {assignee}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          )}
+
+          {/* Kanban Board */}
           <div className="kanban-board">
             {Object.entries(filteredTasks).map(([status, taskList]) => (
               <div key={status} className="kanban-column">
@@ -171,26 +176,12 @@ function Dashboard() {
                       <div key={task._id} className="task-card">
                         <h4>{task.title}</h4>
                         <p><strong>Due:</strong> {new Date(task.dueDate).toLocaleDateString('en-GB')}</p>
-                        {task.status === "Completed" && task.completionDate && (
-                          <p><strong>Completed On:</strong> {new Date(task.completionDate).toLocaleDateString('en-GB')}</p>
-                        )}
                         <p><strong>Priority:</strong> {task.priority}</p>
                         <p><strong>Assignee:</strong> {task.assignee}</p>
-                        
-                        <div className="dashboard-buttons">
-                          <button 
-                            className="edit-button" 
-                            onClick={() => navigate(`/edit-task/${task._id}`)}
-                          >
-                            Edit
-                          </button>
 
-                          <button 
-                            className="info-button" 
-                            onClick={() => navigate(`/task-info/${task._id}`)}
-                          >
-                            More details
-                          </button>
+                        <div className="dashboard-buttons">
+                          <button onClick={() => navigate(`/edit-task/${task._id}`)}>Edit</button>
+                          <button onClick={() => navigate(`/task-info/${task._id}`)}>More details</button>
                         </div>
                       </div>
                     ))
@@ -200,14 +191,9 @@ function Dashboard() {
             ))}
           </div>
 
-          {/* Buttons */}
           <div className="dashboard-buttons">
-            <button onClick={() => navigate("/add-task")} className="add-task-button">
-              Add Task
-            </button>
-            <button onClick={handleLogout} className="logout-button">
-              Logout
-            </button>
+            <button onClick={() => navigate("/add-task")}>Add Task</button>
+            <button onClick={handleLogout}>Logout</button>
           </div>
         </>
       )}
