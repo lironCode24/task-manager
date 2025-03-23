@@ -173,7 +173,7 @@
 }
 
 .toggle-filters-button:hover {
-  background-color: #51d41d;
+  background-color: #93e772;
 }
 
 .filtering-container {
@@ -185,3 +185,17 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+
+.filter-container select,
+.filter-container input {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  width: 220px;
+  transition: all 0.3s ease;
+}
+
+.filter-container input[type="date"] {
+  width: 180px;
+}
