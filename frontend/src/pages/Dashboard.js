@@ -15,6 +15,8 @@ function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [priorityFilter, setPriorityFilter] = useState("");
   const [assigneeFilter, setAssigneeFilter] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [showFilters, setShowFilters] = useState(false); // Toggle filter section
 
   const navigate = useNavigate();
@@ -84,13 +86,20 @@ function Dashboard() {
   const filteredTasks = Object.fromEntries(
     Object.entries(categorizedTasks).map(([status, taskList]) => [
       status,
-      taskList.filter(
-        (task) =>
+      taskList.filter((task) => {
+        const taskDate = new Date(task.dueDate);
+        const start = startDate ? new Date(startDate) : null;
+        const end = endDate ? new Date(endDate) : null;
+
+        return (
           (task.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
             task.description.toLowerCase().includes(searchQuery.toLowerCase())) &&
           (priorityFilter ? task.priority === priorityFilter : true) &&
-          (assigneeFilter ? task.assignee === assigneeFilter : true)
-      ),
+          (assigneeFilter ? task.assignee === assigneeFilter : true) &&
+          (!start || taskDate >= start) &&
+          (!end || taskDate <= end)
+        );
+      }),
     ])
   );
 
@@ -159,6 +168,23 @@ function Dashboard() {
                     </option>
                   ))}
                 </select>
+              </div>
+
+              {/* Due Date Filter */}
+              <div className="filter-container">
+                <label>Due Date Range: </label>
+                From:
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                />
+                To:
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                />
               </div>
             </div>
           )}
