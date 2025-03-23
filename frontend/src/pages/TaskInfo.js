@@ -13,8 +13,8 @@ function TaskInfo() {
     dueDate: "",
     completionDate: "",
     notes: "", 
-    assignee: "", 
-
+    assignee: "",
+    creator: "",  // Add creator field
   });
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -31,8 +31,19 @@ function TaskInfo() {
         );
 
         const data = await response.json();
+
+        // Fetch the username (creator) based on userId
+        const userResponse = await fetch(
+          `http://localhost:5000/api/user/getUsername/${data.userId}`, // Assuming creatorId is stored in task data
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        
+        const userData = await userResponse.json();
         setTask({
           ...data,
+          creator: userData.username,  // Set the username as the creator
           dueDate: data.dueDate ? data.dueDate.split("T")[0] : "",
           completionDate: data.completionDate ? data.completionDate.split("T")[0] : "",
         });
@@ -128,6 +139,18 @@ function TaskInfo() {
             id="assignee"
             name="assignee"
             value={task.assignee}
+            readOnly
+          />
+        </div>
+
+        {/* Creator Field */}
+        <div>
+          <label htmlFor="creator">Creator</label>
+          <input
+            type="text"
+            id="creator"
+            name="creator"
+            value={task.creator}  // Display the creator username
             readOnly
           />
         </div>

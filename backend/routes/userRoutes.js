@@ -71,11 +71,13 @@ router.get("/getUserId/:username", authenticate, async (req, res) => {
   }
 });
 
-// Get username based on user ID (protected route)
 router.get("/getUsername/:userId", authenticate, async (req, res) => {
   try {
-    const { userId } = req.params;  // Get userId from the URL parameter
-    const user = await User.findById(userId, "username");  // Fetch the username based on userId
+    const { userId } = req.params;
+    console.log("Fetching username for userId:", userId); // Log userId
+
+    const user = await User.findById(userId, "username");
+    console.log("User found:", user); // Log user data
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -83,10 +85,9 @@ router.get("/getUsername/:userId", authenticate, async (req, res) => {
 
     res.json({ username: user.username });
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching user:", error); // Log error
     res.status(500).json({ message: "Server error" });
   }
 });
-
 
 module.exports = router;
