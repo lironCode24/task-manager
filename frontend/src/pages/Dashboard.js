@@ -18,6 +18,8 @@ function Dashboard() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [showFilters, setShowFilters] = useState(false); // Toggle filter section
+    const [errorMessage, setErrorMessage] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
 
   const navigate = useNavigate();
 
@@ -87,6 +89,49 @@ function Dashboard() {
     fetchUserTasks();
   }, [navigate]);
 
+  const handleChangeAssignee = async (taskId, newAssignee) => {
+    const token = localStorage.getItem("token");
+  
+    // Get the task data from state
+    const task = tasks.find((task) => task._id === taskId);
+    
+    if (!task) return; // If task is not found
+  
+    const taskData = {
+      ...task,
+      assignee: newAssignee, // Update the assignee
+    };
+  
+    try {
+      const response = await fetch(`http://localhost:5000/api/tasks/${taskId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(taskData),
+      });
+  
+      if (response.ok) {
+        setSuccessMessage("Task updated successfully! ✅");
+        // Update the tasks state to reflect the changes
+        setTasks((prevTasks) =>
+          prevTasks.map((task) =>
+            task._id === taskId ? { ...task, assignee: newAssignee } : task
+          )
+        );
+        setTimeout(() => {
+          setSuccessMessage("");
+        }, 2000);
+      } else {
+        setErrorMessage("Failed to update task.");
+      }
+    } catch (error) {
+      setErrorMessage("Error updating task.");
+    }
+  };
+  
+  
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
@@ -122,6 +167,12 @@ function Dashboard() {
 
   return (
     <div className="dashboard-container">
+    {successMessage && (
+      <div className="message success-message">{successMessage}</div>
+    )}
+    {errorMessage && (
+      <div className="message error-message">{errorMessage}</div>
+    )}
       
       <img
         src={icons[userData?.avatar] || "/default-profile.png"} 
@@ -219,7 +270,20 @@ function Dashboard() {
                         <h4>{task.title}</h4>
                         <p><strong>Due:</strong> {new Date(task.dueDate).toLocaleDateString('en-GB')}</p>
                         <p><strong>Priority:</strong> {task.priority}</p>
-                        <p><strong>Assignee:</strong> {task.assignee}</p>
+                        <div className="assignee-dropdown">
+                        <label htmlFor={`assignee-${task._id}`}><strong>Assignee:</strong></label>
+                        <select
+                          id={`assignee-${task._id}`}
+                          value={task.assignee}
+                          onChange={(e) => handleChangeAssignee(task._id, e.target.value)}
+                        >
+                          {uniqueAssignees.map((assignee) => (
+                            <option key={assignee} value={assignee}>
+                              {assignee}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
 
                         <div className="dashboard-buttons">
                           <button onClick={() => navigate(`/edit-task/${task._id}`)}>Edit</button>
@@ -232,7 +296,6 @@ function Dashboard() {
               </div>
             ))}
           </div>
-
           <div className="dashboard-buttons">
             <button onClick={() => navigate("/add-task")}>Add Task</button>
             <button onClick={handleLogout}>Logout</button>
