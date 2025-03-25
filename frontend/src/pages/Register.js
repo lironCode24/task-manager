@@ -87,8 +87,8 @@ const Register = () => {
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
 
       {/* Back to Login Button */}
-      <button 
-        onClick={() => navigate("/login")} 
+      <button
+        onClick={() => navigate("/login")}
         style={{ marginTop: "15px", padding: "10px", backgroundColor: "#6c757d", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" }}
       >
         Back to Login

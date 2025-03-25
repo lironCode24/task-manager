@@ -18,9 +18,9 @@ function Dashboard() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [showFilters, setShowFilters] = useState(false); // Toggle filter section
-    const [errorMessage, setErrorMessage] = useState("");
-    const [successMessage, setSuccessMessage] = useState("");
-    const [openDropdown, setOpenDropdown] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [openDropdown, setOpenDropdown] = useState(null);
 
   const navigate = useNavigate();
 
@@ -60,11 +60,11 @@ function Dashboard() {
         const response = await fetch("http://localhost:5000/api/user/data", {
           headers: { Authorization: `Bearer ${token}` },
         });
-    
+
         if (response.ok) {
           const data = await response.json();
           const username = data.username; // Get the username from the response
-    
+
           // Now fetch the tasks, passing the username in the header
           const taskResponse = await fetch("http://localhost:5000/api/tasks/getTasks", {
             headers: {
@@ -72,7 +72,7 @@ function Dashboard() {
               "username": username, // Send the username as a custom header
             },
           });
-    
+
           const taskData = await taskResponse.json();
           setTasks(Array.isArray(taskData) ? taskData : []);
         } else {
@@ -83,8 +83,8 @@ function Dashboard() {
         setTasks([]);
       }
     };
-    
-    
+
+
 
     fetchUserData();
     fetchUserTasks();
@@ -92,17 +92,17 @@ function Dashboard() {
 
   const handleChangeAssignee = async (taskId, newAssignee) => {
     const token = localStorage.getItem("token");
-  
+
     // Get the task data from state
     const task = tasks.find((task) => task._id === taskId);
-    
+
     if (!task) return; // If task is not found
-  
+
     const taskData = {
       ...task,
       assignee: newAssignee, // Update the assignee
     };
-  
+
     try {
       const response = await fetch(`http://localhost:5000/api/tasks/${taskId}`, {
         method: "PUT",
@@ -112,7 +112,7 @@ function Dashboard() {
         },
         body: JSON.stringify(taskData),
       });
-  
+
       if (response.ok) {
         setSuccessMessage("Task updated successfully! ✅");
         // Update the tasks state to reflect the changes
@@ -131,8 +131,8 @@ function Dashboard() {
       setErrorMessage("Error updating task.");
     }
   };
-  
-  
+
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
@@ -155,7 +155,7 @@ function Dashboard() {
         const end = endDate ? new Date(endDate) : null;
 
         return (
-          (task.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+          (task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             task.description.toLowerCase().includes(searchQuery.toLowerCase())) &&
           (priorityFilter ? task.priority === priorityFilter : true) &&
           (assigneeFilter ? task.assignee === assigneeFilter : true) &&
@@ -168,17 +168,17 @@ function Dashboard() {
 
   return (
     <div className="dashboard-container">
-    {successMessage && (
-      <div className="message success-message">{successMessage}</div>
-    )}
-    {errorMessage && (
-      <div className="message error-message">{errorMessage}</div>
-    )}
-      
+      {successMessage && (
+        <div className="message success-message">{successMessage}</div>
+      )}
+      {errorMessage && (
+        <div className="message error-message">{errorMessage}</div>
+      )}
+
       <img
-        src={icons[userData?.avatar] || "/default-profile.png"} 
+        src={icons[userData?.avatar] || "/default-profile.png"}
         alt="User Profile"
-        className="user-icon" 
+        className="user-icon"
         onClick={() => navigate("/user-info")}
       />
 
@@ -189,7 +189,7 @@ function Dashboard() {
           <h3>Hi, {userData.username}!</h3>
 
           {/* Toggle Filter Section Button */}
-          <button 
+          <button
             className="toggle-filters-button"
             onClick={() => setShowFilters(!showFilters)}
           >
@@ -272,35 +272,35 @@ function Dashboard() {
                         <p><strong>Due:</strong> {new Date(task.dueDate).toLocaleDateString('en-GB')}</p>
                         <p><strong>Priority:</strong> {task.priority}</p>
                         <div className="assignee-container">
-                        <label><strong>Assignee:</strong></label>
-                        <div className="assignee-dropdown">
-                          <img
-                            src={profileIcon1} // Default profile if none assigned
-                            alt="Assignee"
-                            className="assignee-icon"
-                            onClick={() => setOpenDropdown(openDropdown === task._id ? null : task._id)}
-                          />
-                          <span>{task.assignee}</span> {/* Display the username under the icon */}
-                          
-                          {openDropdown === task._id && (
-  <div className="dropdown-menu">
-    {uniqueAssignees.map((assignee) => (
-      <div
-        key={assignee}
-        className="dropdown-item"
-        onClick={() => {
-          handleChangeAssignee(task._id, assignee); // Update assignee
-          setOpenDropdown(null); // Close the dropdown
-        }}
-      >
-        {assignee} {/* Show only the username here */}
-      </div>
-    ))}
-  </div>
-)}
+                          <label><strong>Assignee:</strong></label>
+                          <div className="assignee-dropdown">
+                            <img
+                              src={profileIcon1} // Default profile if none assigned
+                              alt="Assignee"
+                              className="assignee-icon"
+                              onClick={() => setOpenDropdown(openDropdown === task._id ? null : task._id)}
+                            />
+                            <span>{task.assignee}</span> {/* Display the username under the icon */}
 
+                            {openDropdown === task._id && (
+                              <div className="dropdown-menu">
+                                {uniqueAssignees.map((assignee) => (
+                                  <div
+                                    key={assignee}
+                                    className="dropdown-item"
+                                    onClick={() => {
+                                      handleChangeAssignee(task._id, assignee); // Update assignee
+                                      setOpenDropdown(null); // Close the dropdown
+                                    }}
+                                  >
+                                    {assignee} {/* Show only the username here */}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+
+                          </div>
                         </div>
-                      </div>
 
 
 

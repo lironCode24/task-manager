@@ -73,12 +73,12 @@ function EditTask() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     let updatedTask = { ...task, [name]: value };
-  
+
     // Manually set completionDate when the user selects a date
     if (name === "completionDate" && task.status === "Completed") {
       updatedTask.completionDate = value;
     }
-  
+
     // If the status is changed, clear the completionDate unless it's "Completed"
     if (name === "status" && value !== "Completed") {
       updatedTask.completionDate = ""; // Clear completionDate if status is not "Completed"
@@ -89,7 +89,7 @@ function EditTask() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
-  
+
     if (!task.title || !task.description || !task.dueDate) {
       setErrorMessage("Please fill in all required fields.");
       return;
@@ -97,12 +97,12 @@ function EditTask() {
 
     // Find the user object from the users list based on the selected assignee's username
     const selectedUser = users.find((user) => user.username === task.assignee);
-  
+
     if (!selectedUser) {
       setErrorMessage("Selected assignee not found.");
       return;
     }
-  
+
     const taskData = {
       title: task.title,
       description: task.description,
@@ -110,10 +110,10 @@ function EditTask() {
       priority: task.priority,
       status: task.status,
       notes: task.notes,
-      assignee:task.assignee,
+      assignee: task.assignee,
       ...(task.status === "Completed" && { completionDate: task.completionDate }),
     };
-  
+
     try {
       const response = await fetch(`http://localhost:5000/api/tasks/${id}`, {
         method: "PUT",
@@ -123,7 +123,7 @@ function EditTask() {
         },
         body: JSON.stringify(taskData),
       });
-  
+
       if (response.ok) {
         setSuccessMessage("Task updated successfully! ✅");
         setTimeout(() => {
@@ -137,10 +137,10 @@ function EditTask() {
       setErrorMessage("Error updating task.");
     }
   };
-  
 
-   // Delete Task Function
-   const handleDelete = async () => {
+
+  // Delete Task Function
+  const handleDelete = async () => {
     const token = localStorage.getItem("token");
 
     if (!window.confirm("Are you sure you want to delete this task?")) return;
@@ -272,7 +272,7 @@ function EditTask() {
 
         <button type="submit">Update Task</button>
       </form>
-      
+
       {/* Delete Task Button */}
       <button
         onClick={handleDelete}

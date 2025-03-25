@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const Task = require('../models/Task');
-const authenticate = require('../middleware/authenticate');  
+const authenticate = require('../middleware/authenticate');
 
 // Route to handle task creation
 router.post('/tasks', authenticate, async (req, res) => {
-  const { title, description, dueDate, priority, status, completionDate, notes ,assignee } = req.body;
+  const { title, description, dueDate, priority, status, completionDate, notes, assignee } = req.body;
   const userId = req.user.id;  // Extracted from the token
 
   try {
@@ -17,7 +17,7 @@ router.post('/tasks', authenticate, async (req, res) => {
       status,
       userId,
       completionDate,
-      notes,  
+      notes,
       assignee
     });
 
@@ -35,7 +35,7 @@ router.get('/getTasks', authenticate, async (req, res) => {
     const userId = req.user.id;  // Extract user ID from token
 
     // Access the username from the request headers
-    const username = req.headers['username']; 
+    const username = req.headers['username'];
     // Query tasks where either the user is the creator (userId) or the assignee
     const tasks = await Task.find({
       $or: [
@@ -78,9 +78,9 @@ router.get('/getTaskById', authenticate, async (req, res) => {
 router.put("/:id", authenticate, async (req, res) => {
   const taskId = req.params.id;
   const { title, description, dueDate, priority, status, completionDate, notes, assignee } = req.body;
-  
+
   try {
-    let updatedTask = { title, description, dueDate, priority, status, completionDate, notes,assignee }; 
+    let updatedTask = { title, description, dueDate, priority, status, completionDate, notes, assignee };
 
     const task = await Task.findByIdAndUpdate(taskId, updatedTask, {
       new: true,

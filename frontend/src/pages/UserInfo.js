@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/UserInfo.css"; 
+import "../styles/UserInfo.css";
 
 import profileIcon1 from "../images/profileIcon1.jpg";
 import profileIcon2 from "../images/profileIcon2.jpg";
@@ -102,9 +102,9 @@ function UserInfo() {
           <h3>Hi, {userData.username}!</h3>
           <p>Email: {userData.email}</p>
           <div className="profile-container">
-  <img src={icons[selectedIcon]} alt="User Icon" className="profile-pic" />
-  <FontAwesomeIcon icon={faPencilAlt} className="edit-icon" onClick={openPopup} />
-</div>
+            <img src={icons[selectedIcon]} alt="User Icon" className="profile-pic" />
+            <FontAwesomeIcon icon={faPencilAlt} className="edit-icon" onClick={openPopup} />
+          </div>
 
           <div className="button-container">
             <button className="button logout-button" onClick={handleLogout}>

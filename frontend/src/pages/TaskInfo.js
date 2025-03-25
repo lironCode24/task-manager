@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import "../styles/AddTask.css"; 
+import "../styles/AddTask.css";
 
 function TaskInfo() {
   const { id } = useParams();
@@ -12,7 +12,7 @@ function TaskInfo() {
     status: "Not Started",
     dueDate: "",
     completionDate: "",
-    notes: "", 
+    notes: "",
     assignee: "",
     creator: "",  // Add creator field
   });
@@ -39,7 +39,7 @@ function TaskInfo() {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        
+
         const userData = await userResponse.json();
         setTask({
           ...data,

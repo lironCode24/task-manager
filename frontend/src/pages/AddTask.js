@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/AddTask.css"; 
+import "../styles/AddTask.css";
 
 const AddTask = () => {
   const [title, setTitle] = useState("");
@@ -8,11 +8,11 @@ const AddTask = () => {
   const [dueDate, setDueDate] = useState("");
   const [priority, setPriority] = useState("Medium");
   const [status, setStatus] = useState("Not Started");
-  const [notes, setNotes] = useState(""); 
-  const [assignee, setAssignee] = useState(""); 
+  const [notes, setNotes] = useState("");
+  const [assignee, setAssignee] = useState("");
   const [users, setUsers] = useState([]); // Store list of users
   const [errorMessage, setErrorMessage] = useState("");
-  const today = new Date().toISOString().split("T")[0]; 
+  const today = new Date().toISOString().split("T")[0];
   const [completionDate, setCompletionDate] = useState(today);
   const navigate = useNavigate();
 
@@ -26,38 +26,38 @@ const AddTask = () => {
       navigate("/login");
       return;
     }
-    
-    
-  // Fetch list of users from backend
-  const fetchUsers = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/api/user/allUsers", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setUsers(data); // Assuming API returns an array of users
-        // Fetch the current user's data and set them as the default assignee
-        const userResponse = await fetch("http://localhost:5000/api/user/data", {
+
+
+    // Fetch list of users from backend
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/user/allUsers", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const userData = await userResponse.json();
-        setAssignee(userData.username); // Set the current user as the default assignee
-      } else {
-        setErrorMessage("Failed to fetch users.");
+        if (response.ok) {
+          const data = await response.json();
+          setUsers(data); // Assuming API returns an array of users
+          // Fetch the current user's data and set them as the default assignee
+          const userResponse = await fetch("http://localhost:5000/api/user/data", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const userData = await userResponse.json();
+          setAssignee(userData.username); // Set the current user as the default assignee
+        } else {
+          setErrorMessage("Failed to fetch users.");
+        }
+      } catch (error) {
+        setErrorMessage("Error fetching users.");
       }
-    } catch (error) {
-      setErrorMessage("Error fetching users.");
-    }
-  };
+    };
 
-  fetchUsers();
-}, []);  // This effect runs only once when the component mounts
+    fetchUsers();
+  }, []);  // This effect runs only once when the component mounts
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    
+
+
     // If assignee is not selected, set the current user as the assignee
     if (!assignee) {
       const token = localStorage.getItem("token");
@@ -68,25 +68,25 @@ const AddTask = () => {
       const currentUser = data.username
       setAssignee(currentUser);  // Set the assignee to the current user ID
     }
-  
+
     if (!title || !description || !dueDate || !assignee) {
       setErrorMessage("Please fill in all the required fields.");
       return;
     }
-  
+
     const taskData = {
       title,
       description,
       dueDate,
       priority,
-      status,    
+      status,
       notes,
       assignee,
-      ...(status === "Completed" && { completionDate }) 
+      ...(status === "Completed" && { completionDate })
     };
-  
+
     const token = localStorage.getItem("token");
-  
+
     try {
       const response = await fetch("http://localhost:5000/api/tasks/tasks", {
         method: "POST",
@@ -96,7 +96,7 @@ const AddTask = () => {
         },
         body: JSON.stringify(taskData),
       });
-  
+
       if (response.ok) {
         navigate("/dashboard");
       } else {
@@ -107,7 +107,7 @@ const AddTask = () => {
       setErrorMessage("Error connecting to the server.");
     }
   };
-  
+
 
   return (
     <div className="task-form-container">
@@ -145,9 +145,9 @@ const AddTask = () => {
         <div>
           <label htmlFor="status">Status</label>
           <select id="status" value={status} onChange={(e) => {
-              setStatus(e.target.value);
-              setCompletionDate(e.target.value === "Completed" ? today : ""); 
-            }}>
+            setStatus(e.target.value);
+            setCompletionDate(e.target.value === "Completed" ? today : "");
+          }}>
             <option value="Not Started">Not Started</option>
             <option value="In Progress">In Progress</option>
             <option value="Completed">Completed</option>

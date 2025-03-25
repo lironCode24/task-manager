@@ -33,7 +33,7 @@ function Login() {
       localStorage.setItem("token", response.data.token);
 
       // Redirect to the dashboard or another page after successful login
-      navigate("/Dashboard"); 
+      navigate("/Dashboard");
     } catch (error) {
       console.error("Login Failed:", error.response?.data || error.message);
       // Set the error message to be shown on the page
@@ -67,8 +67,8 @@ function Login() {
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
 
       {/* Back to Home Page Button */}
-      <button 
-        onClick={() => navigate("/")} 
+      <button
+        onClick={() => navigate("/")}
         style={{ marginTop: "15px", padding: "10px", backgroundColor: "#6c757d", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" }}
       >
         Back to Home Page
