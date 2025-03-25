@@ -275,7 +275,10 @@ function Dashboard() {
                         <p><strong>Priority:</strong> {task.priority}</p>
                         <p><strong>Assignee:</strong> {task.assignee}</p>
  
-                        <div className="assignee-container">
+                        <div className="dashboard-buttons">
+                          <button onClick={() => navigate(`/edit-task/${task._id}`)}>Edit</button>
+                          <button onClick={() => navigate(`/task-info/${task._id}`)}>More details</button>
+                          <div className="assignee-container">
                           <div className="assignee-dropdown">
                             <img
                               src={assigneeIcon} 
@@ -303,12 +306,6 @@ function Dashboard() {
 
                           </div>
                         </div>
-
-
-
-                        <div className="dashboard-buttons">
-                          <button onClick={() => navigate(`/edit-task/${task._id}`)}>Edit</button>
-                          <button onClick={() => navigate(`/task-info/${task._id}`)}>More details</button>
                         </div>
                       </div>
                     ))
