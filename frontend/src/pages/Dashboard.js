@@ -8,8 +8,10 @@ import profileIcon3 from "../images/profileIcon3.jpg";
 import profileIcon4 from "../images/profileIcon4.jpg";
 import profileIcon5 from "../images/profileIcon5.jpg";
 import profileIcon6 from "../images/profileIcon6.jpg";
+import assigneeIcon from "../images/assigneeIcon.png";
 
 function Dashboard() {
+
   const [userData, setUserData] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -271,16 +273,16 @@ function Dashboard() {
                         <h4>{task.title}</h4>
                         <p><strong>Due:</strong> {new Date(task.dueDate).toLocaleDateString('en-GB')}</p>
                         <p><strong>Priority:</strong> {task.priority}</p>
+                        <p><strong>Assignee:</strong> {task.assignee}</p>
+ 
                         <div className="assignee-container">
-                          <label><strong>Assignee:</strong></label>
                           <div className="assignee-dropdown">
                             <img
-                              src={profileIcon1} // Default profile if none assigned
+                              src={assigneeIcon} 
                               alt="Assignee"
                               className="assignee-icon"
                               onClick={() => setOpenDropdown(openDropdown === task._id ? null : task._id)}
                             />
-                            <span>{task.assignee}</span> {/* Display the username under the icon */}
 
                             {openDropdown === task._id && (
                               <div className="dropdown-menu">
