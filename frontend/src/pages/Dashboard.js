@@ -20,6 +20,7 @@ function Dashboard() {
   const [showFilters, setShowFilters] = useState(false); // Toggle filter section
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
+    const [openDropdown, setOpenDropdown] = useState(null);
 
   const navigate = useNavigate();
 
@@ -137,7 +138,7 @@ function Dashboard() {
     navigate("/login");
   };
 
-  const uniqueAssignees = [...new Set(tasks.map(task => task.assignee))];
+  const uniqueAssignees = [...new Set(tasks.map(task => task.assignee))].sort();
 
   const categorizedTasks = {
     "Not Started": tasks.filter((task) => task.status === "Not Started"),
@@ -270,20 +271,38 @@ function Dashboard() {
                         <h4>{task.title}</h4>
                         <p><strong>Due:</strong> {new Date(task.dueDate).toLocaleDateString('en-GB')}</p>
                         <p><strong>Priority:</strong> {task.priority}</p>
+                        <div className="assignee-container">
+                        <label><strong>Assignee:</strong></label>
                         <div className="assignee-dropdown">
-                        <label htmlFor={`assignee-${task._id}`}><strong>Assignee:</strong></label>
-                        <select
-                          id={`assignee-${task._id}`}
-                          value={task.assignee}
-                          onChange={(e) => handleChangeAssignee(task._id, e.target.value)}
-                        >
-                          {uniqueAssignees.map((assignee) => (
-                            <option key={assignee} value={assignee}>
-                              {assignee}
-                            </option>
-                          ))}
-                        </select>
+                          <img
+                            src={profileIcon1} // Default profile if none assigned
+                            alt="Assignee"
+                            className="assignee-icon"
+                            onClick={() => setOpenDropdown(openDropdown === task._id ? null : task._id)}
+                          />
+                          <span>{task.assignee}</span> {/* Display the username under the icon */}
+                          
+                          {openDropdown === task._id && (
+  <div className="dropdown-menu">
+    {uniqueAssignees.map((assignee) => (
+      <div
+        key={assignee}
+        className="dropdown-item"
+        onClick={() => {
+          handleChangeAssignee(task._id, assignee); // Update assignee
+          setOpenDropdown(null); // Close the dropdown
+        }}
+      >
+        {assignee} {/* Show only the username here */}
+      </div>
+    ))}
+  </div>
+)}
+
+                        </div>
                       </div>
+
+
 
                         <div className="dashboard-buttons">
                           <button onClick={() => navigate(`/edit-task/${task._id}`)}>Edit</button>
