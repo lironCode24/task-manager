@@ -217,30 +217,30 @@ function Dashboard() {
                 </select>
               </div>
 
-      <div className="filter-container assignee-filter-container">
-        <label htmlFor="assigneeFilter">Assignee: </label>
-        <select
-          id="assigneeFilter"
-          value={assigneeFilter}
-          onChange={(e) => setAssigneeFilter(e.target.value)}
-        >
-          <option value="">All</option>
-          {uniqueAssignees.map((assignee) => (
-            <option key={assignee} value={assignee}>
-              {assignee}
-            </option>
-          ))}
-        </select>
-      
+              <div className="filter-container assignee-filter-container">
+                <label htmlFor="assigneeFilter">Assignee: </label>
+                <select
+                  id="assigneeFilter"
+                  value={assigneeFilter}
+                  onChange={(e) => setAssigneeFilter(e.target.value)}
+                >
+                  <option value="">All</option>
+                  {uniqueAssignees.map((assignee) => (
+                    <option key={assignee} value={assignee}>
+                      {assignee}
+                    </option>
+                  ))}
+                </select>
 
-      {/* Assigned to Me Button */}
-      <button
-        className="assigned-to-me-button"
-        onClick={() => setAssigneeFilter(userData?.username)} // Filter tasks assigned to the current user
-      >
-        Assigned to Me
-      </button>
-    </div>
+
+                {/* Assigned to Me Button */}
+                <button
+                  className="assigned-to-me-button"
+                  onClick={() => setAssigneeFilter(userData?.username)} // Filter tasks assigned to the current user
+                >
+                  Assigned to Me
+                </button>
+              </div>
 
               {/* Due Date Filter */}
               <div className="filter-container">
@@ -279,43 +279,43 @@ function Dashboard() {
                           <p><strong>Completed On:</strong> {new Date(task.completionDate).toLocaleDateString('en-GB')}</p>
                         )}
                         <p><strong>Assignee:</strong> {task.assignee}</p>
- 
-                        {successMessage &&closeDropdown === task._id && <div className="message success-message">{successMessage}</div>} {/* Moved success message here */}
-                        {errorMessage &&closeDropdown === task._id && <div className="message error-message">{errorMessage}</div>} {/* Moved success message here */}
+
+                        {successMessage && closeDropdown === task._id && <div className="message success-message">{successMessage}</div>} {/* Moved success message here */}
+                        {errorMessage && closeDropdown === task._id && <div className="message error-message">{errorMessage}</div>} {/* Moved success message here */}
 
                         <div className="dashboard-buttons">
                           <button onClick={() => navigate(`/edit-task/${task._id}`)}>Edit</button>
                           <button onClick={() => navigate(`/task-info/${task._id}`)}>More details</button>
                           <div className="assignee-container">
 
-                          <div className="assignee-dropdown">
-                            <img
-                              src={assigneeIcon} 
-                              alt="Assignee"
-                              className="assignee-icon"
-                              onClick={() => setOpenDropdown(openDropdown === task._id ? null : task._id)}
-                            />
+                            <div className="assignee-dropdown">
+                              <img
+                                src={assigneeIcon}
+                                alt="Assignee"
+                                className="assignee-icon"
+                                onClick={() => setOpenDropdown(openDropdown === task._id ? null : task._id)}
+                              />
 
-                            {openDropdown === task._id && (
-                              
-                              <div className="dropdown-menu">
-                                {uniqueAssignees.map((assignee) => (
-                                  <div
-                                    key={assignee}
-                                    className="dropdown-item"
-                                    onClick={() => {
-                                      handleChangeAssignee(task._id, assignee); // Update assignee
-                                      setOpenDropdown(null); // Close the dropdown
-                                      setCloseDropdown(task._id); // Close the dropdown
-                                    }}
-                                  >
-                                    {assignee} {/* Show only the username here */}
-                                  </div>
-                                ))}
-                              </div>
-                            )}
+                              {openDropdown === task._id && (
+
+                                <div className="dropdown-menu">
+                                  {uniqueAssignees.map((assignee) => (
+                                    <div
+                                      key={assignee}
+                                      className="dropdown-item"
+                                      onClick={() => {
+                                        handleChangeAssignee(task._id, assignee); // Update assignee
+                                        setOpenDropdown(null); // Close the dropdown
+                                        setCloseDropdown(task._id); // Close the dropdown
+                                      }}
+                                    >
+                                      {assignee} {/* Show only the username here */}
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
                           </div>
-                        </div>
                         </div>
                       </div>
                     ))
