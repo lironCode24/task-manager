@@ -77,7 +77,7 @@ router.get("/getUsername/:userId", authenticate, async (req, res) => {
     // console.log("Fetching username for userId:", userId); // Log userId
 
     const user = await User.findById(userId, "username");
-    console.log("User found:", user); // Log user data
+    //console.log("User found:", user); // Log user data
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });

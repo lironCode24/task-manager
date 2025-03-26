@@ -58,6 +58,7 @@ function Dashboard() {
         navigate("/login");
       }
     };
+
     const fetchUserTasks = async () => {
       try {
         const response = await fetch("http://localhost:5000/api/user/data", {
@@ -86,8 +87,6 @@ function Dashboard() {
         setTasks([]);
       }
     };
-
-
 
     fetchUserData();
     fetchUserTasks();
@@ -134,7 +133,6 @@ function Dashboard() {
       setErrorMessage("Error updating task.");
     }
   };
-
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -219,21 +217,30 @@ function Dashboard() {
                 </select>
               </div>
 
-              <div className="filter-container">
-                <label htmlFor="assigneeFilter">Assignee: </label>
-                <select
-                  id="assigneeFilter"
-                  value={assigneeFilter}
-                  onChange={(e) => setAssigneeFilter(e.target.value)}
-                >
-                  <option value="">All</option>
-                  {uniqueAssignees.map((assignee) => (
-                    <option key={assignee} value={assignee}>
-                      {assignee}
-                    </option>
-                  ))}
-                </select>
-              </div>
+      <div className="filter-container assignee-filter-container">
+        <label htmlFor="assigneeFilter">Assignee: </label>
+        <select
+          id="assigneeFilter"
+          value={assigneeFilter}
+          onChange={(e) => setAssigneeFilter(e.target.value)}
+        >
+          <option value="">All</option>
+          {uniqueAssignees.map((assignee) => (
+            <option key={assignee} value={assignee}>
+              {assignee}
+            </option>
+          ))}
+        </select>
+      
+
+      {/* Assigned to Me Button */}
+      <button
+        className="assigned-to-me-button"
+        onClick={() => setAssigneeFilter(userData?.username)} // Filter tasks assigned to the current user
+      >
+        Assigned to Me
+      </button>
+    </div>
 
               {/* Due Date Filter */}
               <div className="filter-container">
@@ -274,7 +281,7 @@ function Dashboard() {
                         <p><strong>Assignee:</strong> {task.assignee}</p>
  
                         {successMessage &&closeDropdown === task._id && <div className="message success-message">{successMessage}</div>} {/* Moved success message here */}
-                          {errorMessage &&closeDropdown === task._id && <div className="message error-message">{errorMessage}</div>} {/* Moved success message here */}
+                        {errorMessage &&closeDropdown === task._id && <div className="message error-message">{errorMessage}</div>} {/* Moved success message here */}
 
                         <div className="dashboard-buttons">
                           <button onClick={() => navigate(`/edit-task/${task._id}`)}>Edit</button>
