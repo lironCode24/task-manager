@@ -322,10 +322,10 @@ function Dashboard() {
                                   
                                   {users.map((assignee) => (
                                     <div
-                                      key={assignee}
+                                      key={assignee.username}
                                       className="dropdown-item"
                                       onClick={() => {
-                                        handleChangeAssignee(task._id, assignee); // Update assignee
+                                        handleChangeAssignee(task._id, assignee.username); // Update assignee
                                         setOpenDropdown(null); // Close the dropdown
                                         setCloseDropdown(task._id); // Close the dropdown
                                       }}
