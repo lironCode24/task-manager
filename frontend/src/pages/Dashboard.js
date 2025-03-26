@@ -14,6 +14,7 @@ function Dashboard() {
 
   const [userData, setUserData] = useState(null);
   const [tasks, setTasks] = useState([]);
+  const [users, setUsers] = useState([]); // New state to hold the list of users
   const [searchQuery, setSearchQuery] = useState("");
   const [priorityFilter, setPriorityFilter] = useState("");
   const [assigneeFilter, setAssigneeFilter] = useState("");
@@ -88,8 +89,27 @@ function Dashboard() {
       }
     };
 
+    
+    
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/user/allUsers", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setUsers(data);
+        } else {
+          setErrorMessage("Failed to fetch users.");
+        }
+      } catch (error) {
+        setErrorMessage("Error fetching users.");
+      }
+    };
+
     fetchUserData();
     fetchUserTasks();
+    fetchUsers();
   }, [navigate]);
 
   const handleChangeAssignee = async (taskId, newAssignee) => {
@@ -299,7 +319,8 @@ function Dashboard() {
                               {openDropdown === task._id && (
 
                                 <div className="dropdown-menu">
-                                  {uniqueAssignees.map((assignee) => (
+                                  
+                                  {users.map((assignee) => (
                                     <div
                                       key={assignee}
                                       className="dropdown-item"
@@ -309,7 +330,7 @@ function Dashboard() {
                                         setCloseDropdown(task._id); // Close the dropdown
                                       }}
                                     >
-                                      {assignee} {/* Show only the username here */}
+                                      {assignee.username} {/* Show only the username here */}
                                     </div>
                                   ))}
                                 </div>
