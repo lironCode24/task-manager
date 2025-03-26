@@ -273,6 +273,9 @@ function Dashboard() {
                         <h4>{task.title}</h4>
                         <p><strong>Due:</strong> {new Date(task.dueDate).toLocaleDateString('en-GB')}</p>
                         <p><strong>Priority:</strong> {task.priority}</p>
+                        {task.status === "Completed" && task.completionDate && (
+                          <p><strong>Completed On:</strong> {new Date(task.completionDate).toLocaleDateString('en-GB')}</p>
+                        )}
                         <p><strong>Assignee:</strong> {task.assignee}</p>
  
                         <div className="dashboard-buttons">
@@ -316,7 +319,7 @@ function Dashboard() {
           </div>
           <div className="dashboard-buttons">
             <button onClick={() => navigate("/add-task")}>Add Task</button>
-            <button onClick={handleLogout}>Logout</button>
+            <button className="logout-button" onClick={handleLogout}>Logout</button>
           </div>
         </>
       )}

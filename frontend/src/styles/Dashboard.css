@@ -133,6 +133,11 @@
   margin-top: 20px;
 }
 
+.logout-button {
+  background-color: red;
+  color: white;
+}
+
 .add-task-button {
   background-color: #28a745;
   color: white;
