@@ -23,6 +23,7 @@ function Dashboard() {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [closeDropdown, setCloseDropdown] = useState(null);
 
   const navigate = useNavigate();
 
@@ -170,12 +171,6 @@ function Dashboard() {
 
   return (
     <div className="dashboard-container">
-      {successMessage && (
-        <div className="message success-message">{successMessage}</div>
-      )}
-      {errorMessage && (
-        <div className="message error-message">{errorMessage}</div>
-      )}
 
       <img
         src={icons[userData?.avatar] || "/default-profile.png"}
@@ -278,10 +273,14 @@ function Dashboard() {
                         )}
                         <p><strong>Assignee:</strong> {task.assignee}</p>
  
+                        {successMessage &&closeDropdown === task._id && <div className="message success-message">{successMessage}</div>} {/* Moved success message here */}
+                          {errorMessage &&closeDropdown === task._id && <div className="message error-message">{errorMessage}</div>} {/* Moved success message here */}
+
                         <div className="dashboard-buttons">
                           <button onClick={() => navigate(`/edit-task/${task._id}`)}>Edit</button>
                           <button onClick={() => navigate(`/task-info/${task._id}`)}>More details</button>
                           <div className="assignee-container">
+
                           <div className="assignee-dropdown">
                             <img
                               src={assigneeIcon} 
@@ -291,6 +290,7 @@ function Dashboard() {
                             />
 
                             {openDropdown === task._id && (
+                              
                               <div className="dropdown-menu">
                                 {uniqueAssignees.map((assignee) => (
                                   <div
@@ -299,6 +299,7 @@ function Dashboard() {
                                     onClick={() => {
                                       handleChangeAssignee(task._id, assignee); // Update assignee
                                       setOpenDropdown(null); // Close the dropdown
+                                      setCloseDropdown(task._id); // Close the dropdown
                                     }}
                                   >
                                     {assignee} {/* Show only the username here */}
@@ -306,7 +307,6 @@ function Dashboard() {
                                 ))}
                               </div>
                             )}
-
                           </div>
                         </div>
                         </div>
