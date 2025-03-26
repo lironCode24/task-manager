@@ -116,5 +116,32 @@ router.delete('/:id', authenticate, async (req, res) => {
     res.status(500).json({ message: 'Error deleting task' });
   }
 });
+// Get all tasks with specific status for the authenticated user
+router.get('/status/:status', authenticate, async (req, res) => {
+  try {
+    const userId = req.user.id;  // Extract user ID from token
+
+    // Access the username from the request headers
+    const username = req.headers['username'];
+
+    // Extract the status from the route parameter
+    const { status } = req.params;
+
+    // Query tasks where either the user is the creator (userId) or the assignee
+    // and the task's status matches the provided status
+    const tasks = await Task.find({
+      $or: [
+        { userId },           // Tasks where user is the creator
+        { assignee: username } // Tasks where user is the assignee
+      ],
+      status  // Filter tasks by the provided status
+    });
+
+    res.status(200).json(tasks);
+  } catch (error) {
+    console.error("Error fetching tasks:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 module.exports = router;

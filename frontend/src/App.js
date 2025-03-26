@@ -6,9 +6,10 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import UserInfo from "./pages/UserInfo";
 import Dashboard from "./pages/Dashboard";
-import AddTask from "./pages/AddTask"; // Import the AddTask component
+import AddTask from "./pages/AddTask"; 
 import EditTask from "./pages/EditTask";
 import TaskInfo from "./pages/TaskInfo";
+import StatusPage from "./pages/StatusPage";
 
 function App() {
   return (
@@ -18,10 +19,12 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/user-info" element={<UserInfo />} />
-        <Route path="/add-task" element={<AddTask />} /> {/* Add route for AddTask */}
+        <Route path="/add-task" element={<AddTask />} /> 
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/edit-task/:id" element={<EditTask />} />
         <Route path="/task-info/:id" element={<TaskInfo />} />
+        <Route path="/status/:status" element={<StatusPage />} /> 
+
       </Routes>
     </Router>
   );

@@ -89,8 +89,8 @@ function Dashboard() {
       }
     };
 
-    
-    
+
+
     const fetchUsers = async () => {
       try {
         const response = await fetch("http://localhost:5000/api/user/allUsers", {
@@ -285,7 +285,10 @@ function Dashboard() {
           <div className="kanban-board">
             {Object.entries(filteredTasks).map(([status, taskList]) => (
               <div key={status} className="kanban-column">
-                <h3>{status}</h3>
+                <h3 onClick={() => navigate(`/status/${status}`)} style={{ cursor: 'pointer' }}>
+                  {status}
+                </h3>
+
                 <div className="task-list">
                   {taskList.length === 0 ? (
                     <p>No tasks</p>
@@ -319,7 +322,7 @@ function Dashboard() {
                               {openDropdown === task._id && (
 
                                 <div className="dropdown-menu">
-                                  
+
                                   {users.map((assignee) => (
                                     <div
                                       key={assignee.username}
