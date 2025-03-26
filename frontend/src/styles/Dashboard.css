@@ -230,7 +230,8 @@
 
 /* Assignee Container */
 .assignee-container {
-  display: flex;
+  position: relative;
+  display: inline-block;
   align-items: center;
   gap: 10px;
 }
