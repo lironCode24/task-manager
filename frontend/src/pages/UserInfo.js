@@ -110,7 +110,7 @@ function UserInfo() {
             <button className="button logout-button" onClick={handleLogout}>
               Logout
             </button>
-            <button className="button dashboard-button" onClick={handleBackToDashboard}>
+            <button className="back-to-button" onClick={handleBackToDashboard}>
               Back to Dashboard
             </button>
           </div>
