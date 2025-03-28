@@ -132,10 +132,16 @@ function StatusPage() {
     const uniqueAssignees = [...new Set(tasks.map((task) => task.assignee))].sort();
 
     return (
-        <div>
+        
+    <div className="dashboard-container">
             <h1>{status} Tasks</h1>
 
 
+            <button className="back-to-button"
+                onClick={() => navigate("/Dashboard")}
+            >
+                Back to Dashboard
+            </button>
             {/* Toggle Filter Section Button */}
             <button
                 className="toggle-filters-button"
@@ -216,12 +222,13 @@ function StatusPage() {
 
 
             {/* Task List */}
-            <div>
+            <div className="task-grid-container">
+
                 {filteredTasks.length === 0 ? (
                     <p>No tasks found for this status.</p>
                 ) : (
                     filteredTasks.map((task) => (
-                        <div key={task._id} className="task-card">
+                        <div key={task._id} className="task-card-small">
                             <h4>{task.title}</h4>
                             <p><strong>Due:</strong> {new Date(task.dueDate).toLocaleDateString()}</p>
                             <p><strong>Priority:</strong> {task.priority}</p>
@@ -272,7 +279,9 @@ function StatusPage() {
                     ))
                 )}
             </div>
+
         </div>
+
     );
 }
 
