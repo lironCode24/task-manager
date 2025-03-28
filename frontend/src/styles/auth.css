@@ -5,82 +5,104 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: #f8f9fa;
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
 }
 
-/* Center the form */
 form {
-  width: 300px;
-  margin: 50px auto;
-  padding: 20px;
-  background: white;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  width: 350px;
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
   text-align: center;
-}
-
-form label {
-  display: block;
-  font-weight: bold;
-  text-align: left;
-  margin: 20px 0 5px;
-  color: #555;
+  color: #333;
 }
 
 /* Heading */
 form h2 {
-  margin-bottom: 15px;
-  font-size: 24px;
-  color: #333;
+  margin-bottom: 20px;
+  font-size: 26px;
+  font-weight: 600;
+  color: #4b6cb7;
 }
 
-/* Label styles */
-.label {
+/* Labels */
+form label {
   display: block;
-  font-weight: bold;
+  font-weight: 500;
   text-align: left;
-  margin: 20px 0 5px;
+  margin: 12px 0 5px;
   color: #555;
 }
 
-/* Input fields */
+/* Input Fields */
 form input {
-  width: 100%;
-  padding: 10px;
+  width: 94%;
+  padding: 12px;
   margin-bottom: 15px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 8px;
   font-size: 16px;
+  transition: 0.3s;
+  background-color: #f9f9f9;
 }
 
-/* Input focus */
+/* Input Focus Effect */
 form input:focus {
   outline: none;
-  border-color: #007bff;
-  box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.5);
+  border-color: #4b6cb7;
+  box-shadow: 0px 0px 8px rgba(75, 108, 183, 0.6);
 }
 
-/* Button styles */
+/* Primary Button */
 form button {
   width: 100%;
-  padding: 10px;
-  background-color: #007bff;
+  padding: 12px;
+  background: linear-gradient(135deg, #4b6cb7, #182848);
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   font-size: 16px;
   cursor: pointer;
-  transition: 0.3s;
+  transition: 0.3s ease-in-out;
 }
 
-/* Button hover */
+/* Button Hover Effect */
 form button:hover {
-  background-color: #0056b3;
+  background: linear-gradient(135deg, #182848, #4b6cb7);
 }
 
-/* Error message */
+/* Error Message */
 .error-message {
-  color: red;
+  color: #d9534f;
   font-size: 14px;
   margin-top: 10px;
+  font-weight: bold;
+}
+
+/* Back to Home Button */
+.back-btn {
+  margin-top: 15px;
+  padding: 12px;
+  background: linear-gradient(135deg, #6c757d, #495057);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.3s ease-in-out;
+}
+
+/* Back Button Hover Effect */
+.back-btn:hover {
+  background: linear-gradient(135deg, #495057, #343a40);
+}
+
+/* Responsive Design */
+@media (max-width: 400px) {
+  form {
+    width: 90%;
+    padding: 20px;
+  }
 }
