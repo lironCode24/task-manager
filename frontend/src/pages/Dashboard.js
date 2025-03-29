@@ -203,13 +203,22 @@ function Dashboard() {
             task.description.toLowerCase().includes(searchQuery.toLowerCase())) &&
           (priorityFilter ? task.priority === priorityFilter : true) &&
           (assigneeFilter ? task.assignee === assigneeFilter : true) &&
-          (creatorFilter ? task.creator === creatorFilter : true) && 
+          (creatorFilter ? task.creator === creatorFilter : true) &&
           (!start || taskDate >= start) &&
           (!end || taskDate <= end)
         );
       }),
     ])
   );
+
+  const clearFilters = () => {
+    setSearchQuery("");
+    setPriorityFilter("");
+    setAssigneeFilter("");
+    setCreatorFilter("");
+    setStartDate("");
+    setEndDate("");
+  };
 
   return (
     <div className="dashboard-container">
@@ -324,6 +333,11 @@ function Dashboard() {
                   onChange={(e) => setEndDate(e.target.value)}
                 />
               </div>
+
+              {/* Clear Filters Button */}
+              <button className="clear-filters-button" onClick={clearFilters}>
+                Clear Filters
+              </button>
             </div>
           )}
 

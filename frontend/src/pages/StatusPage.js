@@ -172,6 +172,15 @@ function StatusPage() {
     const uniqueAssignees = [...new Set(tasks.map((task) => task.assignee))].sort();
     const uniqueCreators = [...new Set(tasks.map((task) => task.creator))].sort();
 
+    const clearFilters = () => {
+        setSearchQuery("");
+        setPriorityFilter("");
+        setAssigneeFilter("");
+        setCreatorFilter("");
+        setStartDate("");
+        setEndDate("");
+    };
+
     return (
         <div className="dashboard-container">
             <h1>{status} Tasks</h1>
@@ -277,6 +286,10 @@ function StatusPage() {
                             onChange={(e) => setEndDate(e.target.value)}
                         />
                     </div>
+                    {/* Clear Filters Button */}
+                    <button className="clear-filters-button" onClick={clearFilters}>
+                        Clear Filters
+                    </button>
                 </div>
             )}
 

@@ -208,6 +208,10 @@ h1 {
   margin: 10px 0;
 }
 
+.task-card-small:hover {
+  transform: scale(1.02);
+}
+
 /* Edit & More Details Buttons */
 .edit-button,
 .info-button {
