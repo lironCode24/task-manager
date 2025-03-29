@@ -132,10 +132,9 @@ function StatusPage() {
     const uniqueAssignees = [...new Set(tasks.map((task) => task.assignee))].sort();
 
     return (
-        
-    <div className="dashboard-container">
-            <h1>{status} Tasks</h1>
 
+        <div className="dashboard-container">
+            <h1>{status} Tasks</h1>
 
             <button className="back-to-button"
                 onClick={() => navigate("/Dashboard")}
@@ -232,6 +231,22 @@ function StatusPage() {
                             <h4>{task.title}</h4>
                             <p><strong>Due:</strong> {new Date(task.dueDate).toLocaleDateString()}</p>
                             <p><strong>Priority:</strong> {task.priority}</p>
+                            {task.description && (
+                                <p>
+                                    <strong>Description:</strong>{" "}
+                                    {task.description.length > 50
+                                        ? task.description.substring(0, 50) + "..."
+                                        : task.description}
+                                </p>
+                            )}
+                            {task.notes && (
+                                <p>
+                                    <strong>Notes:</strong>{" "}
+                                    {task.notes.length > 50
+                                        ? task.notes.substring(0, 50) + "..."
+                                        : task.notes}
+                                </p>
+                            )}
                             {task.status === "Completed" && task.completionDate && (
                                 <p><strong>Completed On:</strong> {new Date(task.completionDate).toLocaleDateString('en-GB')}</p>
                             )}
