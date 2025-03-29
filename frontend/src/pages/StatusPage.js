@@ -10,6 +10,7 @@ function StatusPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [priorityFilter, setPriorityFilter] = useState("");
     const [assigneeFilter, setAssigneeFilter] = useState("");
+    const [creatorFilter, setCreatorFilter] = useState(""); // State for creator filter
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [showFilters, setShowFilters] = useState(false); // Toggle filter section
@@ -42,17 +43,55 @@ function StatusPage() {
 
         const fetchTasksByStatus = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/api/tasks/status/${status}`, {
-                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+                const token = localStorage.getItem("token");
+                const response = await fetch("http://localhost:5000/api/user/data", {
+                    headers: { Authorization: `Bearer ${token}` },
                 });
+
                 if (response.ok) {
-                    const taskData = await response.json();
-                    setTasks(taskData);
+                    const data = await response.json();
+                    const username = data.username; // Get the logged-in username
+                    const taskResponse = await fetch(`http://localhost:5000/api/tasks/status/${status}`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            "username": username, // Send the username as a custom header
+                        },
+                    }
+                    );
+
+                    let taskData = await taskResponse.json();
+
+                    // Fetch creator usernames for each task if needed
+                    taskData = await Promise.all(
+                        taskData.map(async (task) => {
+                            if (task.userId) {
+                                try {
+                                    const userResponse = await fetch(
+                                        `http://localhost:5000/api/user/getUsername/${task.userId}`,
+                                        {
+                                            headers: { Authorization: `Bearer ${token}` },
+                                        }
+                                    );
+                                    if (userResponse.ok) {
+                                        const userData = await userResponse.json();
+                                        task.creator = userData.username; // Add the creator's username
+                                    }
+                                } catch (error) {
+                                    console.error("Error fetching creator username:", error);
+                                    task.creator = "Unknown"; // Default if fetch fails
+                                }
+                            }
+                            return task;
+                        })
+                    );
+
+                    setTasks(Array.isArray(taskData) ? taskData : []);
                 } else {
-                    console.error("Failed to fetch tasks");
+                    console.log("Failed to fetch username.");
                 }
             } catch (error) {
-                console.error("Error fetching tasks by status:", error);
+                console.error("Error fetching tasks:", error);
+                setTasks([]);
             }
         };
 
@@ -124,21 +163,20 @@ function StatusPage() {
                 task.description.toLowerCase().includes(searchQuery.toLowerCase())) &&
             (priorityFilter ? task.priority === priorityFilter : true) &&
             (assigneeFilter ? task.assignee === assigneeFilter : true) &&
+            (creatorFilter ? task.creator === creatorFilter : true) &&
             (!start || taskDate >= start) &&
             (!end || taskDate <= end)
         );
     });
 
     const uniqueAssignees = [...new Set(tasks.map((task) => task.assignee))].sort();
+    const uniqueCreators = [...new Set(tasks.map((task) => task.creator))].sort();
 
     return (
-
         <div className="dashboard-container">
             <h1>{status} Tasks</h1>
 
-            <button className="back-to-button"
-                onClick={() => navigate("/Dashboard")}
-            >
+            <button className="back-to-button" onClick={() => navigate("/Dashboard")}>
                 Back to Dashboard
             </button>
             {/* Toggle Filter Section Button */}
@@ -190,13 +228,36 @@ function StatusPage() {
                             ))}
                         </select>
 
-
                         {/* Assigned to Me Button */}
                         <button
                             className="assigned-to-me-button"
                             onClick={() => setAssigneeFilter(userData?.username)} // Filter tasks assigned to the current user
                         >
                             Assigned to Me
+                        </button>
+                    </div>
+
+                    {/* Creator Filter */}
+                    <div className="filter-container creator-filter-container">
+                        <label htmlFor="creatorFilter">Creator: </label>
+                        <select
+                            id="creatorFilter"
+                            value={creatorFilter}
+                            onChange={(e) => setCreatorFilter(e.target.value)}
+                        >
+                            <option value="">All</option>
+                            {uniqueCreators.map((creator) => (
+                                <option key={creator} value={creator}>
+                                    {creator}
+                                </option>
+                            ))}
+                        </select>
+                        {/* Created by Me Button */}
+                        <button
+                            className="created-by-me-button"
+                            onClick={() => setCreatorFilter(userData?.username)}
+                        >
+                            Created by Me
                         </button>
                     </div>
 
@@ -219,10 +280,8 @@ function StatusPage() {
                 </div>
             )}
 
-
             {/* Task List */}
             <div className="task-grid-container">
-
                 {filteredTasks.length === 0 ? (
                     <p>No tasks found for this status.</p>
                 ) : (
@@ -251,15 +310,15 @@ function StatusPage() {
                                 <p><strong>Completed On:</strong> {new Date(task.completionDate).toLocaleDateString('en-GB')}</p>
                             )}
                             <p><strong>Assignee:</strong> {task.assignee}</p>
+                            <p><strong>Creator:</strong> {task.creator}</p>
 
-                            {successMessage && closeDropdown === task._id && <div className="message success-message">{successMessage}</div>} {/* Moved success message here */}
-                            {errorMessage && closeDropdown === task._id && <div className="message error-message">{errorMessage}</div>} {/* Moved success message here */}
+                            {successMessage && closeDropdown === task._id && <div className="message success-message">{successMessage}</div>}
+                            {errorMessage && closeDropdown === task._id && <div className="message error-message">{errorMessage}</div>}
 
                             <div className="dashboard-buttons">
                                 <button onClick={() => navigate(`/edit-task/${task._id}`)}>Edit</button>
                                 <button onClick={() => navigate(`/task-info/${task._id}`)}>More details</button>
                                 <div className="assignee-container">
-
                                     <div className="assignee-dropdown">
                                         <img
                                             src={assigneeIcon}
@@ -267,22 +326,19 @@ function StatusPage() {
                                             className="assignee-icon"
                                             onClick={() => setOpenDropdown(openDropdown === task._id ? null : task._id)}
                                         />
-
                                         {openDropdown === task._id && (
-
                                             <div className="dropdown-menu">
-
                                                 {users.map((assignee) => (
                                                     <div
                                                         key={assignee.username}
                                                         className="dropdown-item"
                                                         onClick={() => {
-                                                            handleChangeAssignee(task._id, assignee.username); // Update assignee
-                                                            setOpenDropdown(null); // Close the dropdown
-                                                            setCloseDropdown(task._id); // Close the dropdown
+                                                            handleChangeAssignee(task._id, assignee.username);
+                                                            setOpenDropdown(null);
+                                                            setCloseDropdown(task._id);
                                                         }}
                                                     >
-                                                        {assignee.username} {/* Show only the username here */}
+                                                        {assignee.username}
                                                     </div>
                                                 ))}
                                             </div>
@@ -294,9 +350,7 @@ function StatusPage() {
                     ))
                 )}
             </div>
-
         </div>
-
     );
 }
 

@@ -18,6 +18,7 @@ function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [priorityFilter, setPriorityFilter] = useState("");
   const [assigneeFilter, setAssigneeFilter] = useState("");
+  const [creatorFilter, setCreatorFilter] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [showFilters, setShowFilters] = useState(false); // Toggle filter section
@@ -62,15 +63,15 @@ function Dashboard() {
 
     const fetchUserTasks = async () => {
       try {
+        const token = localStorage.getItem("token");
         const response = await fetch("http://localhost:5000/api/user/data", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         if (response.ok) {
           const data = await response.json();
-          const username = data.username; // Get the username from the response
+          const username = data.username; // Get the logged-in username
 
-          // Now fetch the tasks, passing the username in the header
           const taskResponse = await fetch("http://localhost:5000/api/tasks/getTasks", {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -78,7 +79,30 @@ function Dashboard() {
             },
           });
 
-          const taskData = await taskResponse.json();
+          let taskData = await taskResponse.json();
+
+          // Fetch creator usernames for each task if needed
+          taskData = await Promise.all(taskData.map(async (task) => {
+            if (task.userId) {
+              try {
+                const userResponse = await fetch(
+                  `http://localhost:5000/api/user/getUsername/${task.userId}`,
+                  {
+                    headers: { Authorization: `Bearer ${token}` },
+                  }
+                );
+                if (userResponse.ok) {
+                  const userData = await userResponse.json();
+                  task.creator = userData.username; // Add the creator's username
+                }
+              } catch (error) {
+                console.error("Error fetching creator username:", error);
+                task.creator = "Unknown"; // Default if fetch fails
+              }
+            }
+            return task;
+          }));
+
           setTasks(Array.isArray(taskData) ? taskData : []);
         } else {
           console.log("Failed to fetch username.");
@@ -88,7 +112,6 @@ function Dashboard() {
         setTasks([]);
       }
     };
-
 
 
     const fetchUsers = async () => {
@@ -180,6 +203,7 @@ function Dashboard() {
             task.description.toLowerCase().includes(searchQuery.toLowerCase())) &&
           (priorityFilter ? task.priority === priorityFilter : true) &&
           (assigneeFilter ? task.assignee === assigneeFilter : true) &&
+          (creatorFilter ? task.creator === creatorFilter : true) && 
           (!start || taskDate >= start) &&
           (!end || taskDate <= end)
         );
@@ -259,6 +283,28 @@ function Dashboard() {
                   onClick={() => setAssigneeFilter(userData?.username)} // Filter tasks assigned to the current user
                 >
                   Assigned to Me
+                </button>
+              </div>
+              <div className="filter-container creator-filter-container">
+                <label htmlFor="creatorFilter">Creator: </label>
+                <select
+                  id="creatorFilter"
+                  value={creatorFilter}
+                  onChange={(e) => setCreatorFilter(e.target.value)}
+                >
+                  <option value="">All</option>
+                  {[...new Set(tasks.map((task) => task.creator))].map((creator) => (
+                    <option key={creator} value={creator}>
+                      {creator}
+                    </option>
+                  ))}
+                </select>
+                {/* Created by Me Button */}
+                <button
+                  className="created-by-me-button"
+                  onClick={() => setCreatorFilter(userData?.username)}
+                >
+                  Created by Me
                 </button>
               </div>
 
