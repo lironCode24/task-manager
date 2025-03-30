@@ -25,7 +25,8 @@
   "scripts": {
     "start": "concurrently \"npm start --prefix frontend\" \"npm start --prefix backend\"",
     "frontend": "cd frontend && npm start",
-    "backend": "cd backend && npm start"
+    "backend": "cd backend && npm start",
+    "build": "react-scripts build",
   },
   "devDependencies": {
     "prettier": "3.5.3"
