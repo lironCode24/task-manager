@@ -1,5 +1,11 @@
 {
     "version": 2,
+    "builds": [
+      {
+        "src": "frontend/build/**/*",
+        "use": "@vercel/static"
+      }
+    ],
     "routes": [
       {
         "src": "/(.*)",
