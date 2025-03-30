@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json());
 
 const corsOptions = {
-  origin: ["http://localhost:3000","https://task-manager-c8f8.onrender.com"], // Allow frontend to access backend
+  origin: ["http://localhost:5000","http://localhost:3000","https://task-manager-c8f8.onrender.com"], // Allow frontend to access backend
   methods: "GET,POST,PUT,DELETE",
   credentials: true, // Allow cookies and authentication
 };
