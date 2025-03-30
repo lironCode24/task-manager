@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styles/AddTask.css";
+import API_URL from "../config";
 
 function EditTask() {
   const { id } = useParams();
@@ -52,7 +53,7 @@ function EditTask() {
 
     const fetchUsers = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/user/allUsers", {
+        const response = await fetch(API_URL + "/user/allUsers", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (response.ok) {

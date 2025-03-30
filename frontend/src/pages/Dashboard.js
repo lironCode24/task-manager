@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Dashboard.css";
+import API_URL from "../config";
 
 import profileIcon1 from "../images/profileIcon1.jpg";
 import profileIcon2 from "../images/profileIcon2.jpg";
@@ -47,7 +48,7 @@ function Dashboard() {
 
     const fetchUserData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/user/data", {
+        const response = await fetch(API_URL + "/user/data", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await response.json();
@@ -64,7 +65,7 @@ function Dashboard() {
     const fetchUserTasks = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:5000/api/user/data", {
+        const response = await fetch(API_URL + "/user/data", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -72,7 +73,7 @@ function Dashboard() {
           const data = await response.json();
           const username = data.username; // Get the logged-in username
 
-          const taskResponse = await fetch("http://localhost:5000/api/tasks/getTasks", {
+          const taskResponse = await fetch(API_URL + "/tasks/getTasks", {
             headers: {
               Authorization: `Bearer ${token}`,
               "username": username, // Send the username as a custom header
@@ -116,7 +117,7 @@ function Dashboard() {
 
     const fetchUsers = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/user/allUsers", {
+        const response = await fetch(API_URL + "/user/allUsers", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (response.ok) {

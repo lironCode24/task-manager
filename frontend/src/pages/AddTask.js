@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/AddTask.css";
+import API_URL from "../config";
 
 const AddTask = () => {
   const [title, setTitle] = useState("");
@@ -31,14 +32,14 @@ const AddTask = () => {
     // Fetch list of users from backend
     const fetchUsers = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/user/allUsers", {
+        const response = await fetch(API_URL + "/user/allUsers", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (response.ok) {
           const data = await response.json();
           setUsers(data); // Assuming API returns an array of users
           // Fetch the current user's data and set them as the default assignee
-          const userResponse = await fetch("http://localhost:5000/api/user/data", {
+          const userResponse = await fetch(API_URL + "/user/data", {
             headers: { Authorization: `Bearer ${token}` },
           });
           const userData = await userResponse.json();
@@ -61,7 +62,7 @@ const AddTask = () => {
     // If assignee is not selected, set the current user as the assignee
     if (!assignee) {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/user/data", {
+      const response = await fetch(API_URL + "/user/data", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await response.json();
@@ -88,7 +89,7 @@ const AddTask = () => {
     const token = localStorage.getItem("token");
 
     try {
-      const response = await fetch("http://localhost:5000/api/tasks/tasks", {
+      const response = await fetch(API_URL + "/tasks/tasks", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "../styles/auth.css";  // Use relative path
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import API_URL from "../config";
 
 const Register = () => {
   // State for user inputs
@@ -31,7 +32,7 @@ const Register = () => {
 
     try {
       // Send POST request to backend for registration
-      const response = await axios.post("http://localhost:5000/api/auth/register", {
+      const response = await axios.post(API_URL + "/auth/register", {
         username,
         email,
         password,

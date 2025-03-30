@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/UserInfo.css";
+import API_URL from "../config";
 
 import profileIcon1 from "../images/profileIcon1.jpg";
 import profileIcon2 from "../images/profileIcon2.jpg";
@@ -38,7 +39,7 @@ function UserInfo() {
 
     const fetchUserData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/user/data", {
+        const response = await fetch(API_URL + "/user/data", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await response.json();
@@ -75,7 +76,7 @@ function UserInfo() {
     const token = localStorage.getItem("token");
 
     try {
-      await fetch("http://localhost:5000/api/user/update-avatar", {
+      await fetch(API_URL + "/user/update-avatar", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

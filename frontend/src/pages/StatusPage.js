@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import assigneeIcon from "../images/assigneeIcon.png"; // Ensure the icon path is correct
 import "../styles/Dashboard.css";
+import API_URL from "../config";
 
 function StatusPage() {
     const { status } = useParams(); // Get status from the URL
@@ -30,7 +31,7 @@ function StatusPage() {
 
         const fetchUserData = async () => {
             try {
-                const response = await fetch("http://localhost:5000/api/user/data", {
+                const response = await fetch(API_URL + "/user/data", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 const data = await response.json();
@@ -44,7 +45,7 @@ function StatusPage() {
         const fetchTasksByStatus = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const response = await fetch("http://localhost:5000/api/user/data", {
+                const response = await fetch(API_URL + "/user/data", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
@@ -98,7 +99,7 @@ function StatusPage() {
 
         const fetchUsers = async () => {
             try {
-                const response = await fetch("http://localhost:5000/api/user/allUsers", {
+                const response = await fetch(API_URL + "/user/allUsers", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 if (response.ok) {

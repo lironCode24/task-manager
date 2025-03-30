@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../styles/auth.css";  // Use relative path
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import API_URL from "../config";
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -23,7 +24,7 @@ function Login() {
     setErrorMessage(""); // Clear any previous error message
 
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/login", {
+      const response = await axios.post(API_URL + "/auth/login", {
         username,
         password,
       });
