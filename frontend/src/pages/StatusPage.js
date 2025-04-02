@@ -302,8 +302,7 @@ function StatusPage() {
                     filteredTasks.map((task) => (
                         <div key={task._id} className="task-card-small">
                             <h4>{task.title}</h4>
-                            <p><strong>Due:</strong> {new Date(task.dueDate).toLocaleDateString()}</p>
-                            <p><strong>Priority:</strong> {task.priority}</p>
+
                             {task.description && (
                                 <p>
                                     <strong>Description:</strong>{" "}
@@ -312,6 +311,10 @@ function StatusPage() {
                                         : task.description}
                                 </p>
                             )}
+
+                            <p><strong>Due:</strong> {new Date(task.dueDate).toLocaleDateString()}</p>
+                            <p><strong>Priority:</strong> {task.priority}</p>
+
                             {task.notes && (
                                 <p>
                                     <strong>Notes:</strong>{" "}
@@ -320,11 +323,13 @@ function StatusPage() {
                                         : task.notes}
                                 </p>
                             )}
+
+                            <p><strong>Assignee:</strong> {task.assignee}</p>
+                            <p><strong>Creator:</strong> {task.creator}</p>
+
                             {task.status === "Completed" && task.completionDate && (
                                 <p><strong>Completed On:</strong> {new Date(task.completionDate).toLocaleDateString('en-GB')}</p>
                             )}
-                            <p><strong>Assignee:</strong> {task.assignee}</p>
-                            <p><strong>Creator:</strong> {task.creator}</p>
 
                             {successMessage && closeDropdown === task._id && <div className="message success-message">{successMessage}</div>}
                             {errorMessage && closeDropdown === task._id && <div className="message error-message">{errorMessage}</div>}
@@ -332,6 +337,7 @@ function StatusPage() {
                             <div className="dashboard-buttons">
                                 <button onClick={() => navigate(`/edit-task/${task._id}`)}>Edit</button>
                                 <button onClick={() => navigate(`/task-info/${task._id}`)}>More details</button>
+
                                 <div className="assignee-container">
                                     <div className="assignee-dropdown">
                                         <img
@@ -361,6 +367,7 @@ function StatusPage() {
                                 </div>
                             </div>
                         </div>
+
                     ))
                 )}
             </div>

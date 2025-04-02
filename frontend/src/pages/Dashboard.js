@@ -52,12 +52,14 @@ function Dashboard() {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await response.json();
-        if (data.username.length < 2) {
+        if (response.status!==200 || data.username.length < 2) {
+          localStorage.setItem("token",null);
           navigate("/login");
         }
         setUserData(data);
       } catch (error) {
         console.error("Error fetching user data:", error);
+        localStorage.setItem("token",null);
         navigate("/login");
       }
     };
