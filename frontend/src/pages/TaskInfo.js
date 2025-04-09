@@ -14,11 +14,11 @@ function TaskInfo() {
     completionDate: "",
     notes: "",
     assignee: "",
-    creator: "",  
+    creator: "",
     subtasks: [],
   });
   const [errorMessage, setErrorMessage] = useState("");
-  
+
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -58,6 +58,7 @@ function TaskInfo() {
 
   return (
     <div className="task-form-container">
+      
       <h2>Task Details</h2>
 
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
@@ -156,7 +157,7 @@ function TaskInfo() {
           />
         </div>
 
-        
+
         {/* Subtasks Section */}
         <div>
           <label htmlFor="subtasks">Subtasks</label>
@@ -191,6 +192,25 @@ function TaskInfo() {
             />
           </div>
         )}
+      
+      {/* Edit task */}
+      <button
+        style={{
+          marginTop:"15px",
+          padding: "12px 14px",
+          cursor: "pointer",
+          backgroundColor: "#28a745", // Green shade
+          border: "none",
+          color: "white",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Light shadow effect
+          transition: "background-color 0.3s ease, transform 0.2s ease",
+        }}
+        onClick={() => navigate(`/edit-task/${task._id}`)}
+        onMouseOver={(e) => e.target.style.backgroundColor = "#218838"} // Darker green on hover
+        onMouseOut={(e) => e.target.style.backgroundColor = "#28a745"} // Original color on mouse out
+      >
+        Edit Task
+      </button>
       </form>
 
       {/* Back to dashboard */}
@@ -205,6 +225,7 @@ function TaskInfo() {
       >
         Back to dashboard
       </button>
+
     </div>
   );
 }
