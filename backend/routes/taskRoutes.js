@@ -5,7 +5,7 @@ const authenticate = require('../middleware/authenticate');
 
 // Route to handle task creation
 router.post('/tasks', authenticate, async (req, res) => {
-  const { title, description, dueDate, priority, status, completionDate, notes, assignee } = req.body;
+  const { title, description, dueDate, priority, status, completionDate, notes, assignee, subtasks } = req.body;
   const userId = req.user.id;  // Extracted from the token
 
   try {
@@ -18,10 +18,11 @@ router.post('/tasks', authenticate, async (req, res) => {
       userId,
       completionDate,
       notes,
-      assignee
+      assignee,
+      subtasks: subtasks || []  
     });
 
-    await newTask.save();  // Save the new task to the database
+    await newTask.save();
     res.status(201).json({ message: "Task added successfully", task: newTask });
   } catch (error) {
     console.error("Error adding task:", error);
@@ -51,7 +52,6 @@ router.get('/getTasks', authenticate, async (req, res) => {
   }
 });
 
-
 // Route to get task by id
 router.get('/getTaskById', authenticate, async (req, res) => {
   const taskId = req.query.id; // Get id from query params
@@ -74,13 +74,13 @@ router.get('/getTaskById', authenticate, async (req, res) => {
   }
 });
 
-
+// Route to update task
 router.put("/:id", authenticate, async (req, res) => {
   const taskId = req.params.id;
-  const { title, description, dueDate, priority, status, completionDate, notes, assignee } = req.body;
+  const { title, description, dueDate, priority, status, completionDate, notes, assignee, subtasks } = req.body;
 
   try {
-    let updatedTask = { title, description, dueDate, priority, status, completionDate, notes, assignee };
+    let updatedTask = { title, description, dueDate, priority, status, completionDate, notes, assignee, subtasks };
 
     const task = await Task.findByIdAndUpdate(taskId, updatedTask, {
       new: true,
@@ -97,7 +97,6 @@ router.put("/:id", authenticate, async (req, res) => {
     res.status(500).json({ message: "Error updating task" });
   }
 });
-
 
 // Route to delete a task
 router.delete('/:id', authenticate, async (req, res) => {
@@ -116,6 +115,7 @@ router.delete('/:id', authenticate, async (req, res) => {
     res.status(500).json({ message: 'Error deleting task' });
   }
 });
+
 // Get all tasks with specific status for the authenticated user
 router.get('/status/:status', authenticate, async (req, res) => {
   try {
@@ -143,5 +143,30 @@ router.get('/status/:status', authenticate, async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+router.patch("/tasks/:taskId/subtasks/:subtaskIndex", authenticate, async (req, res) => {
+  const { taskId, subtaskIndex } = req.params;
+
+  try {
+    const task = await Task.findById(taskId);
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    if (!task.subtasks[subtaskIndex]) {
+      return res.status(400).json({ message: "Invalid subtask index" });
+    }
+
+    // Toggle the subtask's "done" status
+    task.subtasks[subtaskIndex].done = !task.subtasks[subtaskIndex].done;
+    await task.save();
+
+    res.status(200).json({ message: "Subtask updated", task });
+  } catch (error) {
+    console.error("Error updating subtask:", error);
+    res.status(500).json({ message: "Error updating subtask" });
+  }
+});
+
 
 module.exports = router;

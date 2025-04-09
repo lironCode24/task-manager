@@ -32,6 +32,12 @@ const taskSchema = new mongoose.Schema({
   notes: {
     type: String, // Free text notes field for extra information
   },
+  subtasks: [
+    {
+      text: { type: String, required: true }, // Subtask description
+      done: { type: Boolean, default: false }, // Checkbox status (checked or not)
+    }
+  ],
   assignee: { type: String, required: false }
 
 }, {

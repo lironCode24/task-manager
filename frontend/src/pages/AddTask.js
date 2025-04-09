@@ -10,6 +10,8 @@ const AddTask = () => {
   const [priority, setPriority] = useState("Medium");
   const [status, setStatus] = useState("Not Started");
   const [notes, setNotes] = useState("");
+  const [subtasks, setSubtasks] = useState([]); // [{ name: "Subtask 1", completed: false }]
+  const [newSubtask, setNewSubtask] = useState(""); // Input for adding a new subtask
   const [assignee, setAssignee] = useState("");
   const [users, setUsers] = useState([]); // Store list of users
   const [errorMessage, setErrorMessage] = useState("");
@@ -58,7 +60,6 @@ const AddTask = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-
     // If assignee is not selected, set the current user as the assignee
     if (!assignee) {
       const token = localStorage.getItem("token");
@@ -74,7 +75,12 @@ const AddTask = () => {
       setErrorMessage("Please fill in all the required fields.");
       return;
     }
-
+    const formattedSubtasks = subtasks.map((subtask) => ({
+      text: subtask.text,
+      done: subtask.done
+    }));
+    
+    
     const taskData = {
       title,
       description,
@@ -83,6 +89,7 @@ const AddTask = () => {
       status,
       notes,
       assignee,
+      subtasks: formattedSubtasks, 
       ...(status === "Completed" && { completionDate })
     };
 
@@ -109,6 +116,34 @@ const AddTask = () => {
     }
   };
 
+  const addSubtask = () => {
+    if (newSubtask.trim()) {
+      setSubtasks([...subtasks, { text: newSubtask, done: false }]);
+      setNewSubtask(""); // Clear input field after adding
+    }
+  };
+
+  const removeSubtask = (index) => {
+    // Show confirmation dialog before removing the subtask
+    const isConfirmed = window.confirm("Are you sure you want to delete this subtask?");
+    
+    if (isConfirmed) {
+      const updatedSubtasks = subtasks.filter((_, i) => i !== index);
+      setSubtasks(updatedSubtasks);
+    }
+  };  
+  
+  const toggleSubtaskCompletion = (index) => {
+    setSubtasks((prevTask) => {
+      const updatedSubtasks = [...prevTask.subtasks];  // Create a new array
+      updatedSubtasks[index] = {
+        ...updatedSubtasks[index], // Preserve the other properties of the subtask
+        done: !updatedSubtasks[index].done, // Toggle the 'done' property
+      };
+      return { ...prevTask, subtasks: updatedSubtasks }; // Update state with new subtasks array
+    });
+  };
+  
 
   return (
     <div className="task-form-container">
@@ -166,6 +201,45 @@ const AddTask = () => {
         <div>
           <label htmlFor="notes">Notes</label>
           <textarea id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} />
+        </div>
+
+        <div>
+          <label>Subtasks</label>
+          <div className="subtasks-container">
+            {subtasks.map((subtask, index) => (
+              <div key={index} className="subtask-item">
+                <input
+                  type="checkbox"
+                  checked={subtask.done}
+                  onChange={() => toggleSubtaskCompletion(index)}
+                />
+                <span className={`subtask-text ${subtask.done ? "subtask-completed" : ""}`}>
+                  {subtask.text}
+                </span>
+                <button type="button" className="subtask-remove" onClick={() => removeSubtask(index)}>
+                  ❌
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <input
+            type="text"
+            className="subtask-input"
+            value={newSubtask}
+            onChange={(e) => setNewSubtask(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault(); // Prevents form submission
+                addSubtask();
+              }
+            }}
+            placeholder="Add a subtask"
+          />
+          
+          <small style={{ color: "#555", display: "block", marginTop: "4px" }}>
+            Press <strong>Enter</strong> to add a subtask
+          </small>
         </div>
 
         {/* Assignee - Dropdown */}

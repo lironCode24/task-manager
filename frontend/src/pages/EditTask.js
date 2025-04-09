@@ -13,12 +13,14 @@ function EditTask() {
     status: "Not Started",
     dueDate: "",
     completionDate: "",
-    notes: "",
+    notes: "", 
+    subtasks: [],
     assignee: "",
   });
   const [users, setUsers] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [newSubtask, setNewSubtask] = useState(""); // Input for adding a new subtask
 
   const today = new Date().toISOString().split("T")[0];
   // Restrict future due dates to 5 years from today
@@ -37,7 +39,6 @@ function EditTask() {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-
         const data = await response.json();
         setTask({
           ...data,
@@ -45,6 +46,7 @@ function EditTask() {
           completionDate: data.completionDate ? data.completionDate.split("T")[0] : "",
           notes: data.notes || "",
           assignee: data.assignee || "",
+          subtasks: Array.isArray(data.subtasks) ? data.subtasks : [],
         });
       } catch (error) {
         console.error("Error fetching task:", error);
@@ -87,6 +89,40 @@ function EditTask() {
     setTask(updatedTask);
   };
 
+  const addSubtask = () => {
+    if (newSubtask.trim()) {
+      setTask((prevTask) => ({
+        ...prevTask,
+        subtasks: [...prevTask.subtasks, { text: newSubtask, done: false }]
+      }));
+      setNewSubtask(""); // Clear input field after adding
+    }
+  };
+  
+  const removeSubtask = (index) => {
+    // Show confirmation dialog before removing the subtask
+    const isConfirmed = window.confirm("Are you sure you want to delete this subtask?");
+    
+    if (isConfirmed) {
+      setTask((prevTask) => ({
+        ...prevTask,
+        subtasks: prevTask.subtasks.filter((_, i) => i !== index)
+      }));
+    }
+  };  
+  
+  const toggleSubtaskCompletion = (index) => {
+    setTask((prevTask) => {
+      const updatedSubtasks = [...prevTask.subtasks];  // Create a new array
+      updatedSubtasks[index] = {
+        ...updatedSubtasks[index], // Preserve the other properties of the subtask
+        done: !updatedSubtasks[index].done, // Toggle the 'done' property
+      };
+      return { ...prevTask, subtasks: updatedSubtasks }; // Update state with new subtasks array
+    });
+  };
+  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
@@ -103,7 +139,7 @@ function EditTask() {
       setErrorMessage("Selected assignee not found.");
       return;
     }
-
+    
     const taskData = {
       title: task.title,
       description: task.description,
@@ -112,6 +148,7 @@ function EditTask() {
       status: task.status,
       notes: task.notes,
       assignee: task.assignee,
+      subtasks: task.subtasks,
       ...(task.status === "Completed" && { completionDate: task.completionDate }),
     };
 
@@ -260,6 +297,47 @@ function EditTask() {
             onChange={handleChange}
           />
         </div>
+
+
+        <div>
+          <label>Subtasks</label>
+          <div className="subtasks-container">
+            {task.subtasks.map((subtask, index) => (
+              <div key={index} className="subtask-item">
+                <input
+                  type="checkbox"
+                  checked={subtask.done}
+                  onChange={() => toggleSubtaskCompletion(index)}
+                />
+                <span className={`subtask-text ${subtask.done ? "subtask-completed" : ""}`}>
+                  {subtask.text}
+                </span>
+                <button type="button" className="subtask-remove" onClick={() => removeSubtask(index)}>
+                  ❌
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <input
+            type="text"
+            className="subtask-input"
+            value={newSubtask}
+            onChange={(e) => setNewSubtask(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault(); // Prevents form submission
+                addSubtask();
+              }
+            }}
+            placeholder="Add a subtask"
+          />
+
+          <small style={{ color: "#555", display: "block", marginTop: "4px" }}>
+            Press <strong>Enter</strong> to add a subtask
+          </small>
+        </div>
+
         <label>Assignee</label>
         <select name="assignee" value={task.assignee} onChange={handleChange}>
           <option value="">Select Assignee</option>

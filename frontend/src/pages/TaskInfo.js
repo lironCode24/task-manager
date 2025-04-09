@@ -14,10 +14,11 @@ function TaskInfo() {
     completionDate: "",
     notes: "",
     assignee: "",
-    creator: "",  // Add creator field
+    creator: "",  
+    subtasks: [],
   });
   const [errorMessage, setErrorMessage] = useState("");
-
+  
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -154,6 +155,28 @@ function TaskInfo() {
             readOnly
           />
         </div>
+
+        
+        {/* Subtasks Section */}
+        <div>
+          <label htmlFor="subtasks">Subtasks</label>
+          {task.subtasks.length > 0 ? (
+            task.subtasks.map((subtask, index) => (
+              <div key={index} className="subtask-item">
+                <input
+                  type="checkbox"
+                  checked={subtask.done}
+                />
+                <span className={`subtask-text ${subtask.done ? "subtask-completed" : ""}`}>
+                  {subtask.text}
+                </span>
+              </div>
+            ))
+          ) : (
+            <div>No subtasks.</div>
+          )}
+        </div>
+
 
         {/* Completion Date (only shown if the task is completed) */}
         {task.status === "Completed" && (
