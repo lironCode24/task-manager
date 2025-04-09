@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import "../styles/auth.css";  // Use relative path
+import "../styles/Auth.css";  // Use relative path
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import API_URL from "../config";
 
 const Register = () => {
-  // State for user inputs
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -13,16 +12,13 @@ const Register = () => {
   const [successMessage, setSuccessMessage] = useState(""); // For storing success messages
   const navigate = useNavigate();
 
-  // Password validation regex
   const passwordValidationRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
 
-  // Handle form submission
   const handleRegister = async (e) => {
     e.preventDefault();
-    setErrorMessage(""); // Clear any previous errors
-    setSuccessMessage(""); // Clear any previous success messages
+    setErrorMessage("");
+    setSuccessMessage("");
 
-    // Validate password
     if (!passwordValidationRegex.test(password)) {
       setErrorMessage(
         "Password must be at least 8 characters long and include one uppercase letter, one lowercase letter, and one number."
@@ -31,23 +27,19 @@ const Register = () => {
     }
 
     try {
-      // Send POST request to backend for registration
       const response = await axios.post(API_URL + "/auth/register", {
         username,
         email,
         password,
       });
 
-      // console.log("Registration Success:", response.data);
-      setSuccessMessage("Registration successful! Redirecting to login page.");
+      setSuccessMessage("Registration successful! You need to be approved by an admin.");
 
-      // Wait for 4 seconds before redirecting to login page
       setTimeout(() => {
-        navigate("/login"); // Redirect to login page
-      }, 4000); // 4000ms = 4 seconds
+        navigate("/login");
+      }, 4000);
     } catch (error) {
       console.error("Registration Failed:", error.response?.data || error.message);
-      // Set the error message to be displayed on the page
       setErrorMessage(error.response?.data?.message || "Registration failed. Please try again.");
     }
   };
@@ -56,7 +48,7 @@ const Register = () => {
     <div className="container">
       <h2>Create a new account</h2>
       <form onSubmit={handleRegister}>
-      <label>Username:</label>
+        <label>Username:</label>
         <input
           type="text"
           placeholder="Enter your username"
@@ -83,7 +75,6 @@ const Register = () => {
         <button type="submit">Register</button>
       </form>
 
-      {/* Display success or error message */}
       {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
 
@@ -96,5 +87,6 @@ const Register = () => {
     </div>
   );
 };
+
 
 export default Register;

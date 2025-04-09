@@ -1,5 +1,5 @@
 import React from "react";
-import "./styles/global.css"; // Import global styles
+import "./styles/Global.css"; // Import global styles
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -10,6 +10,7 @@ import AddTask from "./pages/AddTask";
 import EditTask from "./pages/EditTask";
 import TaskInfo from "./pages/TaskInfo";
 import StatusPage from "./pages/StatusPage";
+import ApproveUser from "./pages/ApproveUser";
 
 function App() {
   return (
@@ -24,7 +25,7 @@ function App() {
         <Route path="/edit-task/:id" element={<EditTask />} />
         <Route path="/task-info/:id" element={<TaskInfo />} />
         <Route path="/status/:status" element={<StatusPage />} /> 
-
+        <Route path="/approveUser" element={<ApproveUser />} />
       </Routes>
     </Router>
   );

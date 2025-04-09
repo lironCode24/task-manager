@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../styles/auth.css";  // Use relative path
+import "../styles/Auth.css";  // Use relative path
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import API_URL from "../config";

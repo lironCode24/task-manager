@@ -1,0 +1,106 @@
+/* General container styling */
+.container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 25px;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Header styling */
+  h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: 600;
+  }
+  
+  /* Paragraph styling */
+  p {
+    text-align: center;
+    color: #333;
+    font-size: 16px;
+    margin: 10px 0;
+  }
+  
+  /* Success and error messages */
+  p.success {
+    color: green;
+    font-weight: bold;
+  }
+  
+  p.error {
+    color: red;
+    font-weight: bold;
+  }
+  
+  /* List styling */
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  li {
+    background-color: #fafafa;
+    padding: 15px;
+    margin-bottom: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column; /* Stack content vertically */
+    align-items: center;     /* Center horizontally */
+    transition: all 0.3s ease;
+  }
+  
+  
+  li span {
+    font-weight: 500;
+    color: black;
+  }
+  
+  button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    opacity: 0.9;
+  }
+  
+  button:active {
+    transform: scale(0.98);
+  }
+  
+  button.approve {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  button.dashboard {
+    margin-top: 20px;
+    width: 100%;
+    background-color: #6c757d;
+    color: white;
+  }
+  
+  p {
+    text-align: center;
+    color: #000;
+  }
+  
+  p.success {
+    color: green;
+    font-weight: bold;
+  }
+  
+  p.error {
+    color: red;
+    font-weight: bold;
+  }
+  

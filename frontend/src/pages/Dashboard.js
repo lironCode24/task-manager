@@ -238,6 +238,14 @@ function Dashboard() {
       ) : (
         <>
           <h3>Hi, {userData.username}!</h3>
+          {userData.isAdmin && (
+            <button
+              className="approve-users-button"
+              onClick={() => navigate("/ApproveUser")}
+            >
+              Approve Users
+            </button>
+          )}
 
           {/* Toggle Filter Section Button */}
           <button

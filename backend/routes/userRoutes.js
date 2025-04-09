@@ -7,7 +7,7 @@ const router = express.Router();
 // Get user data (protected route)
 router.get("/allUsers", authenticate, async (req, res) => {
   try {
-    const users = await User.find({}, "id username email"); // Fetch specific fields
+    const users = await User.find({}, "id username email isApproved"); // Fetch specific fields
     res.json(users);
   } catch (error) {
     res.status(500).json({ message: "Server error" });
