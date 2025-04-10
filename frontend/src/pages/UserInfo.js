@@ -95,11 +95,19 @@ function UserInfo() {
 
   return (
     <div className="user-info-container">
-      <h2>Info</h2>
       {!userData ? (
         <p>Loading...</p>
       ) : (
         <div>
+          {userData.isAdmin && (
+            <button
+              className="approve-users-button"
+              onClick={() => navigate("/ApproveUser")}
+            >
+              Approve Users
+            </button>
+          )}
+          <h2>Info</h2>
           <h3>Hi, {userData.username}!</h3>
           <p>Email: {userData.email}</p>
           <div className="profile-container">
