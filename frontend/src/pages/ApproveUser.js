@@ -115,17 +115,8 @@ function ApproveUser() {
       )}
 
       {/* Back to dashboard page */}
-      <button
+      <button class="back-to-button"
         onClick={() => navigate("/dashboard")}
-        style={{
-          marginTop: "15px",
-          padding: "10px",
-          backgroundColor: "#6c757d",
-          color: "white",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer",
-        }}
       >
         Back to dashboard
       </button>
